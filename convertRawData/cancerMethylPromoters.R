@@ -30,4 +30,8 @@ rownames(betaValues) <- promProbes
 gsg <- goodSamplesGenes(t(betaValues), verbose=3)
 cancerMethyl <- as.data.frame(t(betaValues)[gsg$goodSamples, gsg$goodGenes])
 
+# Manually remove probes which aren't in the normal set
+cancerMethyl$cg14180491 <- NULL
+cancerMethyl$cg15431336 <- NULL
+
 save(cancerMethyl, file="../Rdata/cancerMethylPromoters.Rdata")
