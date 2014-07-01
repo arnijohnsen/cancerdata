@@ -28,6 +28,6 @@ rownames(betaValues) <- promProbes
 
 # Transpose and filter out bad data
 gsg <- goodSamplesGenes(t(betaValues), verbose=3)
-saveDat <- as.data.frame(t(betaValues)[gsg$goodSamples, gsg$goodGenes])
+normalMethyl <- as.data.frame(t(betaValues)[gsg$goodSamples, gsg$goodGenes])
 
-save(saveDat, file="../Rdata/normalMethylPromoters.Rdata")
+save(normalMethyl, file="../Rdata/normalMethylPromoters.Rdata")
