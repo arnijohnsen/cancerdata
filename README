@@ -1,0 +1,51 @@
+This repository contains R scripts which analyse data from
+The Cancer Genome Atlas, specifically Breast invasive carcinoma. 
+Data is available for download at https://tcga-data.nci.nih.gov/tcga/
+
+Installation: 
+  git clone https://arnijohnsen@bitbucket.org/arnijohnsen/cancerdata.git
+  mkdir rawdata
+  mkdir Rdata
+
+The Rscripts rely on the following packages:
+  WGCNA
+
+The data sets used are Methylation, RNA squencing and clinical data, 
+which should be placed in a directory
+  ../rawdata/
+relative to where the source code was cloned. 
+This directory should also contain a subdirectory with probe
+annotation files, ../rawdata/AnnotationFiles/
+
+Scripts found in convertRawData/ convert this data to .Rdata files, 
+which are saved in to a directory called
+  ../Rdata/
+
+Data files from TCGA must be extracted using tar, prior to execution. 
+
+A sample file structure looks as follows: 
+
+|____cancerdata
+| |____convertRawData
+|____rawdata
+| |____RNASeq
+| | |____METADATA
+| | | |____UNC__IlluminaHiSeq_RNASeq
+| | |____RNASeq
+| | | |____UNC__IlluminaHiSeq_RNASeq     : Raw RNA sequencing data files
+| | | | |____Level_3
+| |____Methylation
+| | |____METADATA
+| | | |____JHU_USC__HumanMethylation450
+| | |____DNA_Methylation
+| | | |____JHU_USC__HumanMethylation450  : Raw DNA methylation data files
+| | | | |____Level_3
+| |____Clinical
+| | |____Clinical
+| | | |____Biotab                        : Clinical data
+| | | |____XML
+| |____AnnotationFiles                   : Probe annotation files
+|____Rdata
+
+
+Author: Arni Johnsen, arni.johnsen@gmail.com
