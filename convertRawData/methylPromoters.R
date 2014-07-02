@@ -18,13 +18,13 @@ cancerFileNames <- list.files(dataFileDir, pattern=".*0[A-Z0-9]{2}-[A-Z0-9]{3}-[
 # with each normal sample in one column and each probe in one row
 normalBetaValues <- data.frame(rownames = promProbes)
 nNormal <- length(normalFileNames)
-cat("Reading normal beta values\n"
+cat("Reading normal beta values\n")
 pb <- txtProgressBar(min=1, max=nNormal, style=3)
 for (i in 1:nNormal){
   setTxtProgressBar(pb, i)
   tmpMethyl <- read.table(paste(dataFileDir, normalFileNames[i], sep=""), header=TRUE, sep="\t", quote="\"", skip=1)
   tmp <- tmpMethyl[tmpMethyl$Composite.Element.REF %in% promProbes, ]
-  normalBetaValues[[substring(normalFileNames[i],47,60)]] <- tmp$Beta_value 
+  normalBetaValues[[substring(gsub(".*TCGA", "TCGA", normalFileNames[i]),1,14)]] <- tmp$Beta_value 
 }
 cat("\n")
 normalBetaValues$rownames <- NULL
@@ -40,7 +40,7 @@ for (i in 1:nCancer){
   setTxtProgressBar(pb, i)
   tmpMethyl <- read.table(paste(dataFileDir, cancerFileNames[i], sep=""), header=TRUE, sep="\t", quote="\"", skip=1)
   tmp <- tmpMethyl[tmpMethyl$Composite.Element.REF %in% promProbes, ]
-  cancerBetaValues[[substring(cancerFileNames[i],47,60)]] <- tmp$Beta_value 
+  cancerBetaValues[[substring(gsub(".*TCGA", "TCGA", cancerFileNames[i]),1,14)]] <- tmp$Beta_value 
 }
 cat("\n")
 cancerBetaValues$rownames <- NULL

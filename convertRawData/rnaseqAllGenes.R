@@ -19,14 +19,14 @@ genes <- gsub("\\|.*", "", tmpRnaseq$gene[-(1:29)])
 # Fix one wrong names
 genes[16272] <- "SLC35E2B"
 normalRpkmValues <- data.frame(x = tmpRnaseq$RPKM[-(1:29)])
-colnames(normalRpkmValues) <- substring(normalFileNames[1], 14, 27)
+colnames(normalRpkmValues) <- substring(gsub(".*TCGA", "TCGA", normalFileNames[1]), 1, 14)
 rownames(normalRpkmValues) <- genes
 cat("Reading normal rpkm values\n")
 pb <- txtProgressBar(min=1, max=nNormal, style=3)
 for (i in 2:nNormal){
   setTxtProgressBar(pb, i)
   tmpRnaseq <- read.table(paste(dataFileDir, normalFileNames[i], sep=""), header=TRUE, sep="\t", quote="\"", stringsAsFactors = FALSE)
-  normalRpkmValues[[substring(normalFileNames[i], 14, 27)]] <- tmpRnaseq$RPKM[-(1:29)]
+  normalRpkmValues[[substring(gsub(".*TCGA", "TCGA", normalFileNames[i]), 1, 14)]] <- tmpRnaseq$RPKM[-(1:29)]
 }
 cat("\n")
 
@@ -38,14 +38,14 @@ genes <- gsub("\\|.*", "", tmpRnaseq$gene[-(1:29)])
 # Fix one wrong names
 genes[16272] <- "SLC35E2B"
 cancerRpkmValues <- data.frame(x = tmpRnaseq$RPKM[-(1:29)])
-colnames(cancerRpkmValues) <- substring(cancerFileNames[1], 14, 27)
+colnames(cancerRpkmValues) <- substring(gsub(".*TCGA", "TCGA", cancerFileNames[1]), 1, 14)
 rownames(cancerRpkmValues) <- genes
 cat("Reading cancer rpkm values\n")
 pb <- txtProgressBar(min=1, max=nNormal, style=3)
 for (i in 2:nCancer){
   setTxtProgressBar(pb, i)
   tmpRnaseq <- read.table(paste(dataFileDir, cancerFileNames[i], sep=""), header=TRUE, sep="\t", quote="\"", stringsAsFactors = FALSE)
-  cancerRpkmValues[[substring(cancerFileNames[i], 14, 27)]] <- tmpRnaseq$RPKM[-(1:29)]
+  cancerRpkmValues[[substring(gsub(".*TCGA", "TCGA", cancerFileNames[i]), 1, 14)]] <- tmpRnaseq$RPKM[-(1:29)]
 }
 cat("\n")
 
