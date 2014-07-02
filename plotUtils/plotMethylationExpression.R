@@ -41,9 +41,32 @@ if (length(n) == 0){
     yCdata <- cancerRnaseq[cancerSamples, gene]
     #ymax <- max(quantile(yNdata, probs=prob, na.rm=TRUE), quantile(yCdata, probs=prob, na.rm=TRUE))
     ymax <- max(c(yNdata, yCdata))
+    test <- cor.test(c(xNdata,xCdata), c(yNdata, yCdata))
+    logtest <- cor.test(log(c(xNdata,xCdata)), log(c(yNdata, yCdata)))
+    par(mfrow=c(1,2))
+    # Plot regular data
     plot(xCdata, yCdata, col="red", pch=20, xlim=c(0,1), ylim=c(0,ymax),
-         xlab="Promoter methylation", ylab="RNA expression", main=paste(probe, gene, sep="-"))
+         xlab="Promoter methylation", ylab="RNA expression", 
+	 sub=paste("r=", format(test$estimate, digits=3), 
+	       ", R^2=", format(test$estimate^2, digits=3), 
+	         ", p=", format(test$p.value, digits=3), sep=""), 
+	 main=paste(probe, gene, sep="-"))
     points(xNdata, yNdata, col="blue", pch=20)
+
+    xlogmin <- min(log(c(xNdata, xCdata)), na.rm=T)
+    xlogmax <- max(log(c(xNdata, xCdata)), na.rm=T)
+    ylogmin <- min(log(c(yNdata, yCdata)), na.rm=T)
+    ylogmax <- max(log(c(yNdata, yCdata)), na.rm=T)
+    
+    # Plot log transformed data
+    plot(log(xCdata), log(yCdata), col="red", pch=20, 
+         xlim=c(xlogmin,xlogmax), ylim=c(ylogmin,ylogmax),
+         xlab="log Promoter methylation", ylab="log RNA expression", 
+	 sub=paste("r=", format(logtest$estimate, digits=3), 
+	       ", R^2=", format(logtest$estimate^2, digits=3), 
+	         ", p=", format(logtest$p.value, digits=3), sep=""), 
+	 main=paste(probe, gene, sep="-"))
+    points(log(xNdata), log(yNdata), col="blue", pch=20)
     cat ("Press [enter] for next plot")
     line <- readline()
   }
