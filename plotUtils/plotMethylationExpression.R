@@ -22,7 +22,6 @@ if(!exists("cancerRnaseq")){
 normalSamples <- intersect(rownames(normalMethyl), rownames(normalRnaseq))
 cancerSamples <- intersect(rownames(cancerMethyl), rownames(cancerRnaseq))
 
-prob <- 0.99
 search <- readline("Enter gene or probe name: ")
 search <- paste("^", search, "$", sep="")
 n <- union(grep(search, linkedProbesGenes$probes), grep(search, linkedProbesGenes$genes))
