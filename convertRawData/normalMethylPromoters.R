@@ -31,6 +31,6 @@ gsg <- goodSamplesGenes(t(betaValues), verbose=3)
 normalMethyl <- as.data.frame(t(betaValues)[gsg$goodSamples, gsg$goodGenes])
 
 # Manually remove probes which aren't in the cancer set
-normalMethyl$cg2501987 <- NULL
+normalMethyl$cg25012987 <- NULL
 
 save(normalMethyl, file="../Rdata/normalMethylPromoters.Rdata")
