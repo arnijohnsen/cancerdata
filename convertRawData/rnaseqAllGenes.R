@@ -21,11 +21,14 @@ genes[16272] <- "SLC35E2B"
 normalRpkmValues <- data.frame(x = tmpRnaseq$RPKM[-(1:29)])
 colnames(normalRpkmValues) <- substring(normalFileNames[1], 14, 27)
 rownames(normalRpkmValues) <- genes
+cat("Reading normal rpkm values\n")
+pb <- txtProgressBar(min=1, max=nNormal, style=3)
 for (i in 2:nNormal){
-  cat("Reading normal rpkm values from file", i, "of", nNormal, "\n")
+  setTxtProgressBar(pb, i)
   tmpRnaseq <- read.table(paste(dataFileDir, normalFileNames[i], sep=""), header=TRUE, sep="\t", quote="\"", stringsAsFactors = FALSE)
   normalRpkmValues[[substring(normalFileNames[i], 14, 27)]] <- tmpRnaseq$RPKM[-(1:29)]
 }
+cat("\n")
 
 nCancer <- length(cancerFileNames)
 # Read first file to get gene names and dimension of data frame
@@ -37,11 +40,14 @@ genes[16272] <- "SLC35E2B"
 cancerRpkmValues <- data.frame(x = tmpRnaseq$RPKM[-(1:29)])
 colnames(cancerRpkmValues) <- substring(cancerFileNames[1], 14, 27)
 rownames(cancerRpkmValues) <- genes
+cat("Reading cancer rpkm values\n")
+pb <- txtProgressBar(min=1, max=nNormal, style=3)
 for (i in 2:nCancer){
-  cat("Reading cancer rpkm values from file", i, "of", nCancer, "\n")
+  setTxtProgressBar(pb, i)
   tmpRnaseq <- read.table(paste(dataFileDir, cancerFileNames[i], sep=""), header=TRUE, sep="\t", quote="\"", stringsAsFactors = FALSE)
   cancerRpkmValues[[substring(cancerFileNames[i], 14, 27)]] <- tmpRnaseq$RPKM[-(1:29)]
 }
+cat("\n")
 
 # Transpose and filter out bad data
 ggNormal <- goodGenes(t(normalRpkmValues), verbose=3)
@@ -52,6 +58,7 @@ genesList <- colnames(normalRnaseq)
 normalRnaseqSampList <- rownames(normalRnaseq)
 cancerRnaseqSampList <- rownames(cancerRnaseq)
 
+cat("Saving data to file\n")
 save(normalRnaseq, file="../Rdata/normalRnaseqAllGenes.Rdata")
 save(cancerRnaseq, file="../Rdata/cancerRnaseqAllGenes.Rdata")
 save(genesList,    file="../Rdata/genesList.Rdata")
