@@ -47,8 +47,11 @@ ggCancer <- goodGenes(t(cancerBetaValues), verbose=3)
 normalMethyl <- as.data.frame(t(normalBetaValues)[, ggNormal & ggCancer])
 cancerMethyl <- as.data.frame(t(cancerBetaValues)[, ggNormal & ggCancer])
 probeList <- colnames(normalMethyl)
+normalMethylSampList <- rownames(normalMethyl)
+cancerMethylSampList <- rownames(cancerMethyl)
 
 # Save to files
 save(normalMethyl, file="../Rdata/normalMethylPromoters.Rdata")
 save(cancerMethyl, file="../Rdata/cancerMethylPromoters.Rdata")
 save(probeList,    file="../Rdata/probeList.Rdata")
+save(normalMethylSampList, cancerMethylSampList, file="../Rdata/methylSampList.Rdata")
