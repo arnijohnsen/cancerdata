@@ -24,8 +24,8 @@ cancerSamples <- intersect(rownames(cancerMethyl), rownames(cancerRnaseq))
 
 prob <- 0.99
 search <- readline("Enter gene or probe name: ")
-
-n <- union(grep(search, linkedProbesGenes$probes), pmatch(search, linkedProbesGenes$genes))
+search <- paste("^", search, "$", sep="")
+n <- union(grep(search, linkedProbesGenes$probes), grep(search, linkedProbesGenes$genes))
 
 if (length(n) == 0){
   cat("No hits\n")
