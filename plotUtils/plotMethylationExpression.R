@@ -25,7 +25,7 @@ cancerSamples <- intersect(rownames(cancerMethyl), rownames(cancerRnaseq))
 search <- readline("Enter gene or probe name: ")
 search <- paste("^", search, "$", sep="")
 n <- union(grep(search, linkedProbesGenes$probes), grep(search, linkedProbesGenes$genes))
-
+eps <- 1e-10
 if (length(n) == 0){
   cat("No hits\n")
 } else {
@@ -35,10 +35,10 @@ if (length(n) == 0){
     probe <- as.character(linkedProbesGenes$probes[m])
     gene  <- as.character(linkedProbesGenes$genes[m])
     cat("n =", m, "\n")
-    xNdata <- normalMethyl[normalSamples, probe]
-    yNdata <- normalRnaseq[normalSamples, gene]
-    xCdata <- cancerMethyl[cancerSamples, probe]
-    yCdata <- cancerRnaseq[cancerSamples, gene]
+    xNdata <- normalMethyl[normalSamples, probe] + eps
+    yNdata <- normalRnaseq[normalSamples, gene] + eps
+    xCdata <- cancerMethyl[cancerSamples, probe] + eps
+    yCdata <- cancerRnaseq[cancerSamples, gene] + eps
     #ymax <- max(quantile(yNdata, probs=prob, na.rm=TRUE), quantile(yCdata, probs=prob, na.rm=TRUE))
     ymax <- max(c(yNdata, yCdata))
     test <- cor.test(c(xNdata,xCdata), c(yNdata, yCdata))
