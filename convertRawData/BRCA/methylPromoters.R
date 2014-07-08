@@ -1,5 +1,4 @@
-# Set wd and load libraries
-setwd("~/cancerdata/")
+# Load libraries
 library(WGCNA)
 
 # Get info about promoter probes, defined as TSS200 or UTR5' probes
@@ -10,7 +9,7 @@ promProbes <- probeAnnotations$TargetID[idx]
 
 # Read normal tissue methylation files (regex matches only normal files)
 cat("Retrieving file list\n")
-dataFileDir = "../rawdata/Methylation/DNA_Methylation/JHU_USC__HumanMethylation450/Level_3/"
+dataFileDir = "../rawdata/BRCA/Methylation/DNA_Methylation/JHU_USC__HumanMethylation450/Level_3/"
 normalFileNames <- list.files(dataFileDir, pattern=".*1[A-Z0-9]{2}-[A-Z0-9]{3}-[A-Z0-9]{4}-[0-9]{2}.*")
 cancerFileNames <- list.files(dataFileDir, pattern=".*0[A-Z0-9]{2}-[A-Z0-9]{3}-[A-Z0-9]{4}-[0-9]{2}.*")
 
@@ -57,7 +56,7 @@ normalMethylSampList <- rownames(normalMethyl)
 cancerMethylSampList <- rownames(cancerMethyl)
 
 # Save to files
-save(normalMethyl, file="../Rdata/normalMethylPromoters.Rdata")
-save(cancerMethyl, file="../Rdata/cancerMethylPromoters.Rdata")
-save(probeList,    file="../Rdata/probeList.Rdata")
-save(normalMethylSampList, cancerMethylSampList, file="../Rdata/methylSampList.Rdata")
+save(normalMethyl, file="../Rdata/BRCA/normalMethylPromoters.Rdata")
+save(cancerMethyl, file="../Rdata/BRCA/cancerMethylPromoters.Rdata")
+save(probeList,    file="../Rdata/BRCA/probeList.Rdata")
+save(normalMethylSampList, cancerMethylSampList, file="../Rdata/BRCA/methylSampList.Rdata")

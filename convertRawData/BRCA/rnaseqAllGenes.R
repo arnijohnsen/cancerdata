@@ -1,10 +1,9 @@
-# Set wd and load libraries
-setwd("~/cancerdata/")
+# Load libraries
 library(WGCNA)
 
 # Read normal tissue rna sequencing files (regex matches only normal files)
 cat("Retrieving file list\n")
-dataFileDir = "../rawdata/RNASeq/RNASeq/UNC__IlluminaHiSeq_RNASeq/Level_3/"
+dataFileDir = "../rawdata/BRCA/RNASeq/RNASeq/UNC__IlluminaHiSeq_RNASeq/Level_3/"
 normalFileNames <- list.files(dataFileDir, pattern=".*1[A-Z0-9]{2}-[A-Z0-9]{3}-[A-Z0-9]{4}-[0-9]{2}.*")
 cancerFileNames <- list.files(dataFileDir, pattern=".*0[A-Z0-9]{2}-[A-Z0-9]{3}-[A-Z0-9]{4}-[0-9]{2}.*")
 # Get only annotated gene files
@@ -59,7 +58,7 @@ normalRnaseqSampList <- rownames(normalRnaseq)
 cancerRnaseqSampList <- rownames(cancerRnaseq)
 
 cat("Saving data to file\n")
-save(normalRnaseq, file="../Rdata/normalRnaseqAllGenes.Rdata")
-save(cancerRnaseq, file="../Rdata/cancerRnaseqAllGenes.Rdata")
-save(genesList,    file="../Rdata/genesList.Rdata")
-save(normalRnaseqSampList, cancerRnaseqSampList, file="../Rdata/rnaseqSampList.Rdata")
+save(normalRnaseq, file="../Rdata/BRCA/normalRnaseqAllGenes.Rdata")
+save(cancerRnaseq, file="../Rdata/BRCA/cancerRnaseqAllGenes.Rdata")
+save(genesList,    file="../Rdata/BRCA/genesList.Rdata")
+save(normalRnaseqSampList, cancerRnaseqSampList, file="../Rdata/BRCA/naseqSampList.Rdata")
