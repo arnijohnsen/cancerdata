@@ -25,27 +25,60 @@ Data files from TCGA must be extracted using tar, prior to execution.
 
 A sample file structure looks as follows: 
 
-|____cancerdata
-| |____convertRawData
-|____rawdata
-| |____RNASeq
-| | |____METADATA
-| | | |____UNC__IlluminaHiSeq_RNASeq
-| | |____RNASeq
-| | | |____UNC__IlluminaHiSeq_RNASeq     : Raw RNA sequencing data files
-| | | | |____Level_3
-| |____Methylation
-| | |____METADATA
-| | | |____JHU_USC__HumanMethylation450
-| | |____DNA_Methylation
-| | | |____JHU_USC__HumanMethylation450  : Raw DNA methylation data files
-| | | | |____Level_3
-| |____Clinical
-| | |____Clinical
-| | | |____Biotab                        : Clinical data
-| | | |____XML
-| |____AnnotationFiles                   : Probe annotation files
-|____Rdata
-
+arj32
+|-- cancerdata
+|   |-- convertRawData
+|   |   `-- BRCA
+|   |       |-- generateProbeGenesList.R
+|   |       |-- methylPromoters.R
+|   |       `-- rnaseqAllGenes.R
+|   |-- correlationAnalysis
+|   |   `-- methylRnaseqCorrelation.R
+|   |-- plotUtils
+|   |   `-- plotMethylationExpression.R
+|   `-- README
+|-- rawdata
+|   |-- AnnotationFiles
+|   |   `-- GenomeStudioProbeAnnotations.txt
+|   `-- BRCA
+|       |-- Methylation
+|       |   |-- DNA_Methylation
+|       |   |   `-- JHU_USC__HumanMethylation450
+|       |   |       `-- Level_3
+|       |   |           |-- jhu-usc.edu_BRCA.HumanMethylation450.10.lvl-3.TCGA-A2-A1FV-01A-11D-A13K-05.txt
+|       |   |           |-- jhu-usc.edu_BRCA.HumanMethylation450.10.lvl-3.TCGA-A2-A1FW-01A-11D-A13K-05.txt
+|       |   |           |-- jhu-usc.edu_BRCA.HumanMethylation450.10.lvl-3.TCGA-A2-A1FX-01A-11D-A13K-05.txt
+|       |   |               ... REST OF BRCA DNA METHYLATION FILES ...
+|       |   |-- file_manifest.txt
+|       |   |-- FILE_SAMPLE_MAP.txt
+|       |   |-- METADATA
+|       |   |   `-- JHU_USC__HumanMethylation450
+|       |   |       |-- jhu-usc.edu_BRCA.HumanMethylation450.1.8.0.idf.txt
+|       |   |       `-- jhu-usc.edu_BRCA.HumanMethylation450.1.8.0.sdrf.txt
+|       |   `-- README_DCC.txt
+|       `-- RNASeq
+|           |-- file_manifest.txt
+|           |-- FILE_SAMPLE_MAP.txt
+|           |-- METADATA
+|           |   `-- UNC__IlluminaHiSeq_RNASeq
+|           |       |-- unc.edu_BRCA.IlluminaHiSeq_RNASeq.2.idf.txt
+|           |       `-- unc.edu_BRCA.IlluminaHiSeq_RNASeq.2.sdrf.txt
+|           |-- README_DCC.txt
+|           `-- RNASeq
+|               `-- UNC__IlluminaHiSeq_RNASeq
+|                   `-- Level_3
+|                       |-- UNCID_1109810.TCGA-GM-A2D9-01A-11R-A18M-07.111101_UNC13-SN749_0133_BC04U8ABXX.4_2.trimmed.annotated.translated_to_genomic.spljxn.quantification.txt
+|                       |-- UNCID_1109879.TCGA-GM-A2DC-01A-11R-A18M-07.111101_UNC13-SN749_0133_BC04U8ABXX.7_2.trimmed.annotated.gene.quantification.txt
+|                       |-- UNCID_1110044.TCGA-GM-A2D9-01A-11R-A18M-07.111101_UNC13-SN749_0133_BC04U8ABXX.4_2.trimmed.annotated.gene.quantification.txt
+|                       |-- UNCID_1110094.TCGA-GM-A2DB-01A-31R-A18M-07.111101_UNC13-SN749_0133_BC04U8ABXX.6_2.trimmed.annotated.translated_to_genomic.spljxn.quantification.txt
+|                       |-- UNCID_1110118.TCGA-GM-A2DB-01A-31R-A18M-07.111101_UNC13-SN749_0133_BC04U8ABXX.6_2.trimmed.annotated.gene.quantification.txt
+|                       |-- UNCID_1110143.TCGA-GM-A2D9-01A-11R-A18M-07.111101_UNC13-SN749_0133_BC04U8ABXX.4_2.trimmed.annotated.translated_to_genomic.exon.quantification.txt
+|                           ... REST OF BRCA RNA SEQUENCING FILES ...
+`-- Rdata
+    `-- BRCA
+        |-- cancerRnaseqAllGenes.Rdata
+        |-- genesList.Rdata
+        |-- normalRnaseqAllGenes.Rdata
+        `-- rnaseqSampList.Rdata
 
 Author: Arni Johnsen, arni.johnsen@gmail.com
