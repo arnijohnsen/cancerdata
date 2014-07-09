@@ -1,11 +1,8 @@
-# Set wdir
-setwd("~/cancerdata/")
-
 # Read data
 cat("Read probe annotation, probe list and gene list\n")
 probeAnnotations <- read.table("../rawdata/AnnotationFiles/GenomeStudioProbeAnnotations.txt", header=TRUE, sep="\t", quote="\"", stringsAsFactors=FALSE)
-load("../Rdata/probeList.Rdata")
-load("../Rdata/genesList.Rdata")
+load("../Rdata/BRCA/probeList.Rdata")
+load("../Rdata/BRCA/genesList.Rdata")
 
 # Filter probeAnnotations with interesting probes
 probeAnnotations <- probeAnnotations[probeAnnotations$TargetID %in% probeList,]
@@ -49,4 +46,5 @@ cat("\n")
 idx <- genesLoop %in% genesList
 
 linkedProbesGenes <- data.frame(probes = probeLoop[idx], genes = genesLoop[idx])
-save(linkedProbesGenes, file="../Rdata/linkedProbesGenes.Rdata)
+save(linkedProbesGenes, file="../Rdata/BRCA/linkedProbesGenes.Rdata)
+quit(save="no")

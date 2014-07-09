@@ -71,3 +71,4 @@ if (length(n) == 0){
     line <- readline()
   }
 }
+quit(save="no")

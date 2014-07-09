@@ -1,22 +1,19 @@
-# Set wdir
-# setwd("~/cancerdata/")
-
 # Load data files
 cat("Loading data files\n")
 if(!exists("linkedProbesGenes")){
-  load("../Rdata/linkedProbesGenes.Rdata")
+  load("../Rdata/BRCA/linkedProbesGenes.Rdata")
 }
 if(!exists("normalMethyl")){
-  load("../Rdata/normalMethylPromoters.Rdata")
+  load("../Rdata/BRCA/normalMethylPromoters.Rdata")
 }
 if(!exists("cancerMethyl")){
-  load("../Rdata/cancerMethylPromoters.Rdata")
+  load("../Rdata/BRCA/cancerMethylPromoters.Rdata")
 }
 if(!exists("normalRnaseq")){
-  load("../Rdata/normalRnaseqAllGenes.Rdata")
+  load("../Rdata/BRCA/normalRnaseqAllGenes.Rdata")
 }
 if(!exists("cancerRnaseq")){
-  load("../Rdata/cancerRnaseqAllGenes.Rdata")
+  load("../Rdata/BRCA/cancerRnaseqAllGenes.Rdata")
 }
 
 cat("Resizing data frames\n")
@@ -79,4 +76,5 @@ result$r <- sqrt(result$r2)*sign(result$sloEst)
 
 
 # Filter data
-save(result, "../Rdata/lmMethylRnaseq.Rdata")
+save(result, "../Rdata/BRCA/lmMethylRnaseq.Rdata")
+quit(save="no")
