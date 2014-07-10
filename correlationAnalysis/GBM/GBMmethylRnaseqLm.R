@@ -3,13 +3,13 @@ library(doParallel)
 registerDoParallel(2)
 cat("Loading data files\n")
 if(!exists("linkedProbesGenes")){
-  load("../Rdata/GBM/linkedProbesGenes.Rdata")
+  load("../Rdata/GBM/info/linkedProbesGenes.Rdata")
 }
 if(!exists("cancerMethyl")){
-  load("../Rdata/GBM/cancerMethylPromoters.Rdata")
+  load("../Rdata/GBM/data/GBM-CMP.Rdata")
 }
 if(!exists("cancerRnaseq")){
-  load("../Rdata/GBM/cancerRnaseqAllGenes.Rdata")
+  load("../Rdata/GBM/data/GBM-CEA.Rdata")
 }
 
 cat("Resizing data frames\n")
@@ -59,5 +59,5 @@ result$sloPadj <- p.adjust(result$sloPval, method="BH")
 result$r <- sqrt(result$r2)*sign(result$sloEst)
 
 # Filter data
-save(result, file="../Rdata/GBM/lmMethylRnaseq.Rdata")
+save(result, file="../Rdata/GBM/info/lmMethylRnaseq.Rdata")
 quit(save="no")

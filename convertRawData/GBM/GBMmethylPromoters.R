@@ -36,7 +36,7 @@ probeList <- colnames(cancerMethyl)
 cancerMethylSampList <- rownames(cancerMethyl)
 
 # Save to files
-save(cancerMethyl, file="../Rdata/GBM/cancerMethylPromoters.Rdata")
-save(probeList,    file="../Rdata/GBM/probeList.Rdata")
-save(cancerMethylSampList, file="../Rdata/GBM/methylSampList.Rdata")
+save(cancerMethyl, file="../Rdata/GBM/data/GBM-CMP.Rdata")
+save(probeList,    file="../Rdata/GBM/info/probeList.Rdata")
+save(cancerMethylSampList, file="../Rdata/GBM/info/methylSampList.Rdata")
 quit(save="no")
