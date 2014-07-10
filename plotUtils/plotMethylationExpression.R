@@ -4,19 +4,19 @@
 # Load data files
 cat("Loading data files\n")
 if(!exists("linkedProbesGenes")){
-  load("../Rdata/linkedProbesGenes.Rdata")
+  load("../Rdata/BRCA/linkedProbesGenes.Rdata")
 }
 if(!exists("normalMethyl")){
-  load("../Rdata/normalMethylPromoters.Rdata")
+  load("../Rdata/BRCA/normalMethylPromoters.Rdata")
 }
 if(!exists("cancerMethyl")){
-  load("../Rdata/cancerMethylPromoters.Rdata")
+  load("../Rdata/BRCA/cancerMethylPromoters.Rdata")
 }
 if(!exists("normalRnaseq")){
-  load("../Rdata/normalRnaseqAllGenes.Rdata")
+  load("../Rdata/BRCA/normalRnaseqAllGenes.Rdata")
 }
 if(!exists("cancerRnaseq")){
-  load("../Rdata/cancerRnaseqAllGenes.Rdata")
+  load("../Rdata/BRCA/cancerRnaseqAllGenes.Rdata")
 }
 
 normalSamples <- intersect(rownames(normalMethyl), rownames(normalRnaseq))
@@ -71,4 +71,3 @@ if (length(n) == 0){
     line <- readline()
   }
 }
-quit(save="no")
