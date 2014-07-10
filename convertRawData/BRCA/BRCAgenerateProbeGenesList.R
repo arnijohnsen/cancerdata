@@ -46,5 +46,5 @@ cat("\n")
 idx <- genesLoop %in% genesList
 
 linkedProbesGenes <- data.frame(probes = probeLoop[idx], genes = genesLoop[idx])
-save(linkedProbesGenes, file="../Rdata/BRCA/linkedProbesGenes.Rdata)
+save(linkedProbesGenes, file="../Rdata/BRCA/linkedProbesGenes.Rdata")
 quit(save="no")
