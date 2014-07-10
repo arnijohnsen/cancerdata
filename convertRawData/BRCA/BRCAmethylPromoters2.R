@@ -14,8 +14,8 @@ normalMethylSampList <- rownames(normalMethyl)
 cancerMethylSampList <- rownames(cancerMethyl)
 
 # Save to files
-save(normalMethyl, file="../Rdata/BRCA/normalMethylPromoters.Rdata")
-save(cancerMethyl, file="../Rdata/BRCA/cancerMethylPromoters.Rdata")
-save(probeList,    file="../Rdata/BRCA/probeList.Rdata")
-save(normalMethylSampList, cancerMethylSampList, file="../Rdata/BRCA/methylSampList.Rdata")
+save(normalMethyl, file="../Rdata/BRCA/data/BRCA-NMP.Rdata")
+save(cancerMethyl, file="../Rdata/BRCA/data/BRCA-CMP.Rdata")
+save(probeList,    file="../Rdata/BRCA/info/probeList.Rdata")
+save(normalMethylSampList, cancerMethylSampList, file="../Rdata/BRCA/info/methylSampList.Rdata")
 quit(save="no")

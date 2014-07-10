@@ -1,8 +1,8 @@
 # Read data
 cat("Read probe annotation, probe list and gene list\n")
 probeAnnotations <- read.table("../rawdata/AnnotationFiles/GenomeStudioProbeAnnotations.txt", header=TRUE, sep="\t", quote="\"", stringsAsFactors=FALSE)
-load("../Rdata/BRCA/probeList.Rdata")
-load("../Rdata/BRCA/genesList.Rdata")
+load("../Rdata/BRCA/info/probeList.Rdata")
+load("../Rdata/BRCA/info/genesList.Rdata")
 
 # Filter probeAnnotations with interesting probes
 probeAnnotations <- probeAnnotations[probeAnnotations$TargetID %in% probeList,]
@@ -46,5 +46,5 @@ cat("\n")
 idx <- genesLoop %in% genesList
 
 linkedProbesGenes <- data.frame(probes = probeLoop[idx], genes = genesLoop[idx])
-save(linkedProbesGenes, file="../Rdata/BRCA/linkedProbesGenes.Rdata")
+save(linkedProbesGenes, file="../Rdata/BRCA/info/linkedProbesGenes.Rdata")
 quit(save="no")
