@@ -1,48 +1,39 @@
 # Load data files
-library(doParallel)
-registerDoParallel(2)
 cat("Loading data files\n")
-if(!exists("linkedProbesGenes")){
-  load("../Rdata/BRCA/info/linkedProbesGenes.Rdata")
-}
-if(!exists("normalMethyl")){
-  load("../Rdata/BRCA/data/BRCA-NMP.Rdata")
-}
-if(!exists("cancerMethyl")){
-  load("../Rdata/BRCA/data/BRCA-CMP.Rdata")
-}
-if(!exists("normalRnaseq")){
-  load("../Rdata/BRCA/data/BRCA-NEA.Rdata")
-}
-if(!exists("cancerRnaseq")){
-  load("../Rdata/BRCA/data/BRCA-CEA.Rdata")
-}
+load("../Rdata/BRCA/info/linkedProbesGenes.Rdata")
+load("../Rdata/BRCA/data/BRCA-NMP.Rdata")
+load("../Rdata/BRCA/data/BRCA-CMP.Rdata")
+load("../Rdata/BRCA/data/BRCA-NEA.Rdata")
+load("../Rdata/BRCA/data/BRCA-CEA.Rdata")
 
+# Resize data frames
 cat("Resizing data frames\n")
-if(!exists("allMethyl") || !exists("allRnaseq")){
+# Use only samples iwhich have both methylation and expression data
 normalSamples <- intersect(rownames(normalMethyl), rownames(normalRnaseq))
 cancerSamples <- intersect(rownames(cancerMethyl), rownames(cancerRnaseq))
 
-allMethyl <- rbind(normalMethyl[normalSamples,], 
-                   cancerMethyl[cancerSamples,])
-allRnaseq <- rbind(normalRnaseq[normalSamples,],
-                   cancerRnaseq[cancerSamples,])
-}
+# Combine cancer and normal data in one frame, using selected samples
+allMethyl <- rbind(normalMethyl[normalSamples,], cancerMethyl[cancerSamples,])
+allRnaseq <- rbind(normalRnaseq[normalSamples,], cancerRnaseq[cancerSamples,])
+
+# Remove other not-used data.frames
 rm(normalMethyl, cancerMethyl, normalRnaseq, cancerRnaseq)
 gc()
 
-# Make smaller for testing
 n <- dim(allMethyl)[2]
 eps <- 1e-10
 pb <- txtProgressBar(min=1, max=n, style=3)
 prt <- proc.time()
-cat("Running loop for lm\n")
 
+cat("Running loop for lm\n")
+# Create data frame with result
 result <- data.frame(r2 = numeric(0), 
                      sloEst  = numeric(0), 
 		     sloPval = numeric(0), 
 		     can99q  = numeric(0),
 		     nonMethQuant = numeric(0))
+# Run loop, in each iteration a log~log linear model is computed for
+# a pair of gene-probe
 for(i in 1:n){
   setTxtProgressBar(pb, i)
   # lm model
@@ -63,11 +54,13 @@ for(i in 1:n){
 }
 print(proc.time() - prt)
 cat("\n")
-colnames(result) <- c("r2", "sloEst", "sloPval", "can99q", "nonMethQuant")
+
+# Add row names (ex. cg12345678-ABCD1)
 rownames(result) <- paste(linkedProbesGenes$probes[1:n], linkedProbesGenes$genes[1:n], sep="-")
+# Create column with adjusted p-values and r
 result$sloPadj <- p.adjust(result$sloPval, method="BH")
 result$r <- sqrt(result$r2)*sign(result$sloEst)
 
-# Filter data
+# Save result and exit
 save(result, file="../Rdata/BRCA/calc/BRCA-lmMethylRnaseq.Rdata")
 quit(save="no")

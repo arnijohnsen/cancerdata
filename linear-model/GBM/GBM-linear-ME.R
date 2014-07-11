@@ -1,40 +1,36 @@
 # Load data files
-library(doParallel)
-registerDoParallel(2)
 cat("Loading data files\n")
-if(!exists("linkedProbesGenes")){
-  load("../Rdata/GBM/info/linkedProbesGenes.Rdata")
-}
-if(!exists("cancerMethyl")){
-  load("../Rdata/GBM/data/GBM-CMP.Rdata")
-}
-if(!exists("cancerRnaseq")){
-  load("../Rdata/GBM/data/GBM-CEA.Rdata")
-}
+load("../Rdata/GBM/info/linkedProbesGenes.Rdata")
+load("../Rdata/GBM/data/GBM-CMP.Rdata")
+load("../Rdata/GBM/data/GBM-CEA.Rdata")
 
+# Resize data frames
 cat("Resizing data frames\n")
-if(!exists("allMethyl") || !exists("allRnaseq")){
+# Use only samples iwhich have both methylation and expression data
 cancerSamples <- intersect(rownames(cancerMethyl), rownames(cancerRnaseq))
 
+# Create new data.frame using selected samples
 allMethyl <- cancerMethyl[cancerSamples,]
 allRnaseq <- cancerRnaseq[cancerSamples,]
-}
+
+# Remove other not-used data.frames
 rm(cancerMethyl, cancerRnaseq)
 gc()
 
-# Make smaller for testing
 n <- dim(allMethyl)[2]
-#n <- 256
 eps <- 1e-10
 pb <- txtProgressBar(min=1, max=n, style=3)
 prt <- proc.time()
-cat("Running loop for lm\n")
 
+cat("Running loop for lm\n")
+# Create data frame with result
 result <- data.frame(r2 = numeric(0), 
                      sloEst  = numeric(0), 
 		     sloPval = numeric(0), 
 		     can99q  = numeric(0),
 		     nonMethQuant = numeric(0))
+# Run loop, in each iteration a log~log linear model is computed for
+# a pair of gene-probe
 for(i in 1:n){
   setTxtProgressBar(pb, i)
   # lm model
@@ -47,17 +43,18 @@ for(i in 1:n){
   # 99th quantile in cancer, mean/sd in cancer, mean/sd in normal
   result[i,] <- c(sum$r.squared,                      # R^2
                   sum$coefficients[c(2,8)],           # Slope and P-value
-		  quantile(x, 0.99, na.rm=T),        # 99th methyl quant. of cancer
-		  quantile(y[x<0.2], 0.10, na.rm=T))# 10th expr. quant of non-methylated cancer
+		  quantile(x, 0.99, na.rm=T),         # 99th methyl quant. of cancer
+		  quantile(y[x<0.2], 0.10, na.rm=T))  # 10th expr. quant of non-methylated cancer
 
 }
 print(proc.time() - prt)
 cat("\n")
-colnames(result) <- c("r2", "sloEst", "sloPval", "can99q", "nonMethQuant")
+# Add row names (ex. cg12345678-ABCD1)
 rownames(result) <- paste(linkedProbesGenes$probes[1:n], linkedProbesGenes$genes[1:n], sep="-")
+# Create column with adjusted p-values and r
 result$sloPadj <- p.adjust(result$sloPval, method="BH")
 result$r <- sqrt(result$r2)*sign(result$sloEst)
 
-# Filter data
+# Save result and exit
 save(result, file="../Rdata/GBM/info/lmMethylRnaseq.Rdata")
 quit(save="no")
