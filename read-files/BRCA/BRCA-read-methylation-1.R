@@ -45,6 +45,7 @@ cat("\n")
 cancerBetaValues$rownames <- NULL
 rownames(cancerBetaValues) <- promProbes
 
-# Save data for next script
+# Save data for next script, as doing everything in the same script
+# caused memory issues
 save(normalBetaValues, file="../Rdata/BRCA/tmp/normalBetaValues.Rdata")
 save(cancerBetaValues, file="../Rdata/BRCA/tmp/cancerBetaValues.Rdata")

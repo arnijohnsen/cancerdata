@@ -1,7 +1,7 @@
 # Load libraries
 library(WGCNA)
 
-# Get info about promoter probes, defined as TSS200 or UTR5' probes
+# Get info about promoter probes, defined as TSS200 or 5'UTR probes
 cat("Reading probes annotation file\n")
 probeAnnotations <- read.table("../rawdata/AnnotationFiles/GenomeStudioProbeAnnotations.txt", header=TRUE, sep="\t", quote="\"")
 idx <- grep("TSS200|5'UTR", probeAnnotations$UCSC_REFGENE_GROUP)

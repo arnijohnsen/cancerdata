@@ -1,4 +1,6 @@
+# Load libraries
 library(WGCNA)
+
 # Load data from previous script
 load(file="../Rdata/BRCA/tmp/normalBetaValues.Rdata")
 load(file="../Rdata/BRCA/tmp/cancerBetaValues.Rdata")
