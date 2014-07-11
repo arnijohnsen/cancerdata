@@ -1,5 +1,10 @@
 This repository contains R scripts which analyse data from
-The Cancer Genome Atlas, specifically Breast invasive carcinoma. 
+The Cancer Genome Atlas, currently:
+ - BRCA (Breast invasive carcinoma)
+ - GBM  (Glioblastoma)
+ - KIRC (Kidney renal clear cell carcinoma) - Under construction
+ - OV   (Ovarian serous cystadenocarcinoma) - Under construction
+
 Data is available for download at https://tcga-data.nci.nih.gov/tcga/
 
 Installation: 
