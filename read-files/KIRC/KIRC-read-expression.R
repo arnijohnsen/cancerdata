@@ -69,9 +69,9 @@ KIRC.CEA.samples <- rownames(KIRC.CEA)
 
 # Save data to file and exit
 cat("Saving data to file\n")
-save(KIRC.NEA, file="../Rdata/KIRC/data/KIRC-NEA.Rdata")
-save(KIRC.CEA, file="../Rdata/KIRC/data/KIRC-CEA.Rdata")
-save(KIRC.genes,    file="../Rdata/KIRC/info/KIRC-genes.Rdata")
+save(KIRC.NEA,         file="../Rdata/KIRC/data/KIRC-NEA.Rdata")
+save(KIRC.CEA,         file="../Rdata/KIRC/data/KIRC-CEA.Rdata")
+save(KIRC.genes,       file="../Rdata/KIRC/info/KIRC-genes.Rdata")
 save(KIRC.NEA.samples, file="../Rdata/KIRC/info/KIRC-NEA-samples.Rdata")
 save(KIRC.CEA.samples, file="../Rdata/KIRC/info/KIRC-CEA-samples.Rdata")
 quit(save="no")
