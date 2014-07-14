@@ -3,74 +3,75 @@ library(WGCNA)
 
 # Read normal and cancer tissue rna sequencing files (regex matches only normal/cancer files)
 cat("Retrieving file list\n")
-dataFileDir = "../rawdata/BRCA/RNASeq/RNASeq/UNC__IlluminaHiSeq_RNASeq/Level_3/"
-normalFileNames <- list.files(dataFileDir, pattern=".*1[A-Z0-9]{2}-[A-Z0-9]{3}-[A-Z0-9]{4}-[0-9]{2}.*")
-cancerFileNames <- list.files(dataFileDir, pattern=".*0[A-Z0-9]{2}-[A-Z0-9]{3}-[A-Z0-9]{4}-[0-9]{2}.*")
+data.file.dir = "../rawdata/BRCA/RNASeq/RNASeq/UNC__IlluminaHiSeq_RNASeq/Level_3/"
+normal.file.names <- list.files(data.file.dir, pattern=".*1[A-Z0-9]{2}-[A-Z0-9]{3}-[A-Z0-9]{4}-[0-9]{2}.*")
+cancer.file.names <- list.files(data.file.dir, pattern=".*0[A-Z0-9]{2}-[A-Z0-9]{3}-[A-Z0-9]{4}-[0-9]{2}.*")
 # Rna sequencing files contain multiple files for each barcode, select only gene expression
-normalFileNames <- normalFileNames[grep("gene", normalFileNames)]
-cancerFileNames <- cancerFileNames[grep("gene", cancerFileNames)]
+normal.file.names <- normal.file.names[grep("gene", normal.file.names)]
+cancer.file.names <- cancer.file.names[grep("gene", cancer.file.names)]
 
-nNormal <- length(normalFileNames)
+n.normal <- length(normal.file.names)
 # Read first file to get gene names and dimension of data frame
-cat("Reading normal rpkm values from file", 1, "of", nNormal, "\n")
-tmpRnaseq <- read.table(paste(dataFileDir, normalFileNames[1], sep=""), 
+cat("Reading normal rpkm values from file", 1, "of", n.normal, "\n")
+tmp.rnaseq <- read.table(paste(data.file.dir, normal.file.names[1], sep=""), 
                         header=TRUE, sep="\t", quote="\"", stringsAsFactors = FALSE)
-genes <- gsub("\\|.*", "", tmpRnaseq$gene[-(1:29)])
+genes <- gsub("\\|.*", "", tmp.rnaseq$gene[-(1:29)])
 genes[16272] <- "SLC35E2B" # Fix one wrong gene name
 
 # Create data frame, don't use first 29 genes as they don't have names
-normalRpkmValues <- data.frame(x = tmpRnaseq$RPKM[-(1:29)])
-colnames(normalRpkmValues) <- substring(gsub(".*TCGA", "TCGA", normalFileNames[1]), 1, 14)
-rownames(normalRpkmValues) <- genes
+normal.rpkm.values <- data.frame(x = tmp.rnaseq$RPKM[-(1:29)])
+colnames(normal.rpkm.values) <- substring(gsub(".*TCGA", "TCGA", normal.file.names[1]), 1, 14)
+rownames(normal.rpkm.values) <- genes
 
 # Run loop over the rest of normal files
 cat("Reading normal rpkm values\n")
-pb <- txtProgressBar(min=1, max=nNormal, style=3)
-for (i in 2:nNormal){
+pb <- txtProgressBar(min=1, max=n.normal, style=3)
+for (i in 2:n.normal){
   setTxtProgressBar(pb, i)
-  tmpRnaseq <- read.table(paste(dataFileDir, normalFileNames[i], sep=""), 
+  tmp.rnaseq <- read.table(paste(data.file.dir, normal.file.names[i], sep=""), 
                           header=TRUE, sep="\t", quote="\"", stringsAsFactors = FALSE)
-  normalRpkmValues[[substring(gsub(".*TCGA", "TCGA", normalFileNames[i]), 1, 14)]] <- tmpRnaseq$RPKM[-(1:29)]
+  normal.rpkm.values[[substring(gsub(".*TCGA", "TCGA", normal.file.names[i]), 1, 14)]] <- tmp.rnaseq$RPKM[-(1:29)]
 }
 cat("\n")
 
-nCancer <- length(cancerFileNames)
+n.cancer <- length(cancer.file.names)
 # Read first file to get gene names and dimension of data frame
-cat("Reading cancer rpkm values from file", 1, "of", nCancer, "\n")
-tmpRnaseq <- read.table(paste(dataFileDir, cancerFileNames[1], sep=""), 
+cat("Reading cancer rpkm values from file", 1, "of", n.cancer, "\n")
+tmp.rnaseq <- read.table(paste(data.file.dir, cancer.file.names[1], sep=""), 
                         header=TRUE, sep="\t", quote="\"", stringsAsFactors = FALSE)
-genes <- gsub("\\|.*", "", tmpRnaseq$gene[-(1:29)])
+genes <- gsub("\\|.*", "", tmp.rnaseq$gene[-(1:29)])
 genes[16272] <- "SLC35E2B" # Fix one wrong gene name
 
 # Create data frame, don't use first 29 genes as they don't have names
-cancerRpkmValues <- data.frame(x = tmpRnaseq$RPKM[-(1:29)])
-colnames(cancerRpkmValues) <- substring(gsub(".*TCGA", "TCGA", cancerFileNames[1]), 1, 14)
-rownames(cancerRpkmValues) <- genes
+cancer.rpkm.values <- data.frame(x = tmp.rnaseq$RPKM[-(1:29)])
+colnames(cancer.rpkm.values) <- substring(gsub(".*TCGA", "TCGA", cancer.file.names[1]), 1, 14)
+rownames(cancer.rpkm.values) <- genes
 
 # Run loop over the rest of normal files
 cat("Reading cancer rpkm values\n")
-pb <- txtProgressBar(min=1, max=nNormal, style=3)
-for (i in 2:nCancer){
+pb <- txtProgressBar(min=1, max=n.normal, style=3)
+for (i in 2:n.cancer){
   setTxtProgressBar(pb, i)
-  tmpRnaseq <- read.table(paste(dataFileDir, cancerFileNames[i], sep=""), 
+  tmp.rnaseq <- read.table(paste(data.file.dir, cancer.file.names[i], sep=""), 
                           header=TRUE, sep="\t", quote="\"", stringsAsFactors = FALSE)
-  cancerRpkmValues[[substring(gsub(".*TCGA", "TCGA", cancerFileNames[i]), 1, 14)]] <- tmpRnaseq$RPKM[-(1:29)]
+  cancer.rpkm.values[[substring(gsub(".*TCGA", "TCGA", cancer.file.names[i]), 1, 14)]] <- tmp.rnaseq$RPKM[-(1:29)]
 }
 cat("\n")
 
 # Transpose and filter out bad data
-ggNormal <- goodGenes(t(normalRpkmValues), verbose=3)
-ggCancer <- goodGenes(t(cancerRpkmValues), verbose=3)
-normalRnaseq <- as.data.frame(t(normalRpkmValues)[, ggNormal & ggCancer])
-cancerRnaseq <- as.data.frame(t(cancerRpkmValues)[, ggNormal & ggCancer])
-genesList <- colnames(normalRnaseq)
-normalRnaseqSampList <- rownames(normalRnaseq)
-cancerRnaseqSampList <- rownames(cancerRnaseq)
+gg.normal <- goodGenes(t(normal.rpkm.values), verbose=3)
+gg.cancer <- goodGenes(t(cancer.rpkm.values), verbose=3)
+BRCA.NEA <- as.data.frame(t(normal.rpkm.values)[, gg.normal & gg.cancer])
+BRCA.CEA <- as.data.frame(t(cancer.rpkm.values)[, gg.normal & gg.cancer])
+BRCA.genes <- colnames(BRCA.NEA)
+BRCA.NEA.samples <- rownames(BRCA.NEA)
+BRCA.CEA.samples <- rownames(BRCA.CEA)
 
 # Save data to file and exit
 cat("Saving data to file\n")
-save(normalRnaseq, file="../Rdata/BRCA/data/BRCA-NEA.Rdata")
-save(cancerRnaseq, file="../Rdata/BRCA/data/BRCA-CEA.Rdata")
-save(genesList,    file="../Rdata/BRCA/info/genesList.Rdata")
-save(normalRnaseqSampList, cancerRnaseqSampList, file="../Rdata/BRCA/info/rnaseqSampList.Rdata")
+save(BRCA.NEA,         file="../Rdata/BRCA/data/BRCA-NEA.Rdata")
+save(BRCA.CEA,         file="../Rdata/BRCA/data/BRCA-CEA.Rdata")
+save(BRCA.genes,       file="../Rdata/BRCA/info/BRCA-genes.Rdata")
+save(BRCA.NEA.samples, file="../Rdata/BRCA/info/BRCA-NEA-samples.Rdata")
+save(BRCA.CEA.samples, file="../Rdata/BRCA/info/BRCA-CEA-samples.Rdata")
 quit(save="no")
