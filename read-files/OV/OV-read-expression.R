@@ -3,49 +3,49 @@ library(WGCNA)
 
 # Read cancer tissue rna sequencing files (regex matches only cancer files)
 cat("Retrieving file list\n")
-dataFileDir = "../rawdata/OV/RNASeq/RNASeqV2/UNC__IlluminaHiSeq_RNASeqV2/Level_3/"
-cancerFileNames <- list.files(dataFileDir)
+data.file.dir = "../rawdata/OV/RNASeq/RNASeqV2/UNC__IlluminaHiSeq_RNASeqV2/Level_3/"
+cancer.file.names <- list.files(data.file.dir)
 # Get only annotated gene files
-cancerFileNames <- cancerFileNames[grep("genes.normalized_results", cancerFileNames)]
+cancer.file.names <- cancer.file.names[grep("genes.normalized_results", cancer.file.names)]
 
 # File names don't include barcodes, read FILE_SAMPLE_MAP to get barcodes
 link <- read.table("../rawdata/OV/RNASeq/FILE_SAMPLE_MAP.txt", header=T, sep="\t")
 # Use only first 14 letters of barcode
 link$barcode.s. <- substring(gsub(".*,TCGA", "TCGA", link$barcode.s.), 1, 14)
 
-nCancer <- length(cancerFileNames)
+n.cancer <- length(cancer.file.names)
 # Read first file to get gene names and dimension of data frame
-cat("Reading cancer rpkm values from file", 1, "of", nCancer, "\n")
-tmpRnaseq <- read.table(paste(dataFileDir, cancerFileNames[1], sep=""), 
+cat("Reading cancer rpkm values from file", 1, "of", n.cancer, "\n")
+tmp.rnaseq <- read.table(paste(data.file.dir, cancer.file.names[1], sep=""), 
                         header=TRUE, sep="\t", quote="\"", stringsAsFactors = FALSE)
-genes <- gsub("\\|.*", "", tmpRnaseq$gene_id[-(1:29)])
+genes <- gsub("\\|.*", "", tmp.rnaseq$gene_id[-(1:29)])
 genes[grep("SLC35E2", genes)][2] <- "SLC35E2B" # Fix one wrong gene name
 
 # Create data frame, don't use first 29 genes as they don't have names
-cancerRpkmValues <- data.frame(x = tmpRnaseq$normalized_count[-(1:29)])
-colnames(cancerRpkmValues) <- link$barcode.s.[link$filename == cancerFileNames[1]]
-rownames(cancerRpkmValues) <- genes
+cancer.rpkm.values <- data.frame(x = tmp.rnaseq$normalized_count[-(1:29)])
+colnames(cancer.rpkm.values) <- link$barcode.s.[link$filename == cancer.file.names[1]]
+rownames(cancer.rpkm.values) <- genes
 cat("Reading cancer rpkm values\n")
-pb <- txtProgressBar(min=1, max=nCancer, style=3)
-for (i in 2:nCancer){
+pb <- txtProgressBar(min=1, max=n.cancer, style=3)
+for (i in 2:n.cancer){
   setTxtProgressBar(pb, i)
-  tmpRnaseq <- read.table(paste(dataFileDir, cancerFileNames[i], sep=""), 
+  tmp.rnaseq <- read.table(paste(data.file.dir, cancer.file.names[i], sep=""), 
                           header=TRUE, sep="\t", quote="\"", stringsAsFactors = FALSE)
-  cancerRpkmValues[[ link$barcode.s.[link$filename == cancerFileNames[i]] ]] <- tmpRnaseq$normalized_count[-(1:29)]
+  cancer.rpkm.values[[ link$barcode.s.[link$filename == cancer.file.names[i]] ]] <- tmp.rnaseq$normalized_count[-(1:29)]
 }
 cat("\n")
-print(dim(cancerRpkmValues))
-print(nCancer)
-print(colnames(cancerRpkmValues))
+print(dim(cancer.rpkm.values))
+print(n.cancer)
+print(colnames(cancer.rpkm.values))
 # Transpose and filter out bad data
-ggCancer <- goodGenes(t(cancerRpkmValues), verbose=3)
-cancerRnaseq <- as.data.frame(t(cancerRpkmValues)[,ggCancer])
-genesList <- colnames(cancerRnaseq)
-cancerRnaseqSampList <- rownames(cancerRnaseq)
+gg.cancer <- goodGenes(t(cancer.rpkm.values), verbose=3)
+OV.CEA <- as.data.frame(t(cancer.rpkm.values)[,gg.cancer])
+OV.genes <- colnames(OV.CEA)
+OV.CEA.samples <- rownames(OV.CEA)
 
 # Save data to file and exit
 cat("Saving data to file\n")
-save(cancerRnaseq, file="../Rdata/OV/data/OV-CEA.Rdata")
-save(genesList,    file="../Rdata/OV/info/genesList.Rdata")
-save(cancerRnaseqSampList, file="../Rdata/OV/info/rnaseqSampList.Rdata")
+save(OV.CEA,         file="../Rdata/OV/data/OV-CEA.Rdata")
+save(OV.genes,       file="../Rdata/OV/info/OV-genes.Rdata")
+save(OV.CEA.samples, file="../Rdata/OV/info/OV-CEA-samples.Rdata")
 quit(save="no")
