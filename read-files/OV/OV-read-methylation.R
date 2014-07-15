@@ -9,12 +9,13 @@ prom.probes <- probe.annotation$TargetID[idx]
 
 # Read cancer tissue methylation files (regex matches only cancer files)
 cat("Retrieving file list\n")
-data.file.dir <- "../rawdata/OV/Methylation/DNA_Methylation/JHU_USC__HumanMethylation450/Level_3/"
+data.file.dir <- "../rawdata/OV/Methylation/DNA_Methylation/JHU_USC__HumanMethylation27/Level_3/"
 cancer.file.names <- list.files(data.file.dir, pattern=".*0[A-Z0-9]{2}-[A-Z0-9]{3}-[A-Z0-9]{4}-[0-9]{2}.*")
 
 # Create new data.frame containing beta values, 
 # with each cancer sample in one column and each probe in one row
-cancer.beta.values <- data.frame(rownames = prom.probes)
+tmp.methyl <- read.table(paste(data.file.dir, cancer.file.names[1], sep=""), header=TRUE, sep="\t", quote="\"", skip=1)
+cancer.beta.values <- data.frame(rownames = tmp.methyl$Composite.Element.REF[tmp.methyl$Composite.Element.REF %in% prom.probes])
 n.cancer <- length(cancer.file.names)
 cat("Reading cancer beta values\n")
 pb <- txtProgressBar(min=1, max=n.cancer, style=3)
@@ -26,7 +27,7 @@ for (i in 1:n.cancer){
 }
 cat("\n")
 cancer.beta.values$rownames <- NULL
-rownames(cancer.beta.values) <- prom.probes
+rownames(cancer.beta.values) <- tmp.methyl$Composite.Element.REF[tmp.methyl$Composite.Element.REF %in% prom.probes]
 
 # Transpose and filter out bad data
 gg.cancer <- goodGenes(t(cancer.beta.values), verbose=3)
