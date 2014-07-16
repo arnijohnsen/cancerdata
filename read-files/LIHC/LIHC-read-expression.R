@@ -1,7 +1,7 @@
 # Load libraries
 library(WGCNA)
 
-# Read cancer tissue methylation files (regex matches only cancer files)
+# Set data file directory and get information about file names and barcodes
 cat("Retrieving file list\n")
 data.file.dir = "../rawdata/LIHC/RNASeq/RNASeqV2/UNC__IlluminaHiSeq_RNASeqV2/Level_3/"
 file.sample.map <- read.table("../rawdata/LIHC/RNASeq/FILE_SAMPLE_MAP.txt", header=T, sep="\t")
@@ -15,14 +15,19 @@ n <- length(file.sample.map$filename)
 # Read first file to get gene names and dimension of data frame
 tmp.rnaseq <- read.table(paste(data.file.dir, file.sample.map$filename[1], sep=""), 
                         header=TRUE, sep="\t", quote="\"", stringsAsFactors = FALSE)
+# Create list of genes and fix one wrong gene name
 genes <- gsub("\\|.*", "", tmp.rnaseq$gene_id[-(1:29)])
 genes[grep("SLC35E2", genes)][2] <- "SLC35E2B" # Fix one wrong gene name
+
+# Create data frames for beta values
 normal.rpkm.values <- data.frame(rownames = genes)
 cancer.rpkm.values <- data.frame(rownames = genes)
 
 cat("Reading cancer rpkm values\n")
 pb <- txtProgressBar(min=1, max=n, style=3)
 contains.normal <- FALSE
+# In each loop iteration, one file is read and from its barcode it's determined
+#  wether it's normal or cancer, and that data is saved to the corresponding frame
 for (i in 1:n){
   setTxtProgressBar(pb, i)
   tmp.rnaseq <- read.table(paste(data.file.dir, file.sample.map$filename[i], sep=""), 
@@ -35,6 +40,7 @@ for (i in 1:n){
   }
 }
 cat("\n")
+# Fix rownames
 cancer.rpkm.values$rownames <- NULL
 rownames(cancer.rpkm.values) <- genes
 if(contains.normal){
@@ -47,6 +53,7 @@ gg.cancer <- goodGenes(t(cancer.rpkm.values), verbose=3)
 if(contains.normal){
   gg.normal <- goodGenes(t(normal.rpkm.values), verbose=3)
 }
+# Save files, two versions depending on if there are any normal samples
 if(contains.normal){
   LIHC.CEA <- as.data.frame(t(cancer.rpkm.values)[,gg.normal & gg.cancer])
   LIHC.NEA <- as.data.frame(t(normal.rpkm.values)[,gg.normal & gg.cancer])
