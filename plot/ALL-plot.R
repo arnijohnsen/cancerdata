@@ -1,14 +1,14 @@
 # Ask user which data sets he wants to use
 cat("Enter data sets you want to use, seperated by spaces\n")
-cat("(Available are BRCA GBM KIRC OV PRAD)\n")
+cat("(Available are BRCA GBM KIRC OV PRAD LIHC)\n")
 data.sets.input <- readline()
 data.sets.list <- unlist(strsplit(data.sets.input, " "))
 
 # Remove unavailable data sets
-available.sets <- c("BRCA", "GBM", "KIRC", "OV", "PRAD")
+available.sets <- c("BRCA", "GBM", "KIRC", "OV", "PRAD", "LIHC")
 cat("Removing invalid sets:", data.sets.list[!(data.sets.list %in% available.sets)], "\n")
 data.sets.list <- data.sets.list[data.sets.list %in% available.sets]
-normal.sets <- c("BRCA")
+normal.sets <- c("BRCA", "LIHC")
 
 # Load missing data sets
 for (i in 1:length(data.sets.list)){
