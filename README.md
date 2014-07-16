@@ -1,6 +1,7 @@
 # Introduction
 This repository contains R scripts which analyse data from
 The Cancer Genome Atlas, currently:
+
 - BRCA (Breast invasive carcinoma):        450K / RNASeq
 - GBM  (Glioblastoma)                      450K / RNASeqV2
 - KIRC (Kidney renal clear cell carcinoma) 450K / RNASeq
@@ -11,23 +12,23 @@ The Cancer Genome Atlas, currently:
 Data is available for download at https://tcga-data.nci.nih.gov/tcga/
 
 Installation: 
-  git clone https://arnijohnsen@bitbucket.org/arnijohnsen/cancerdata.git
-  mkdir rawdata
-  mkdir Rdata
+    git clone https://arnijohnsen@bitbucket.org/arnijohnsen/cancerdata.git
+    mkdir rawdata
+    mkdir Rdata
 
 The Rscripts rely on the following packages:
-  WGCNA
+    WGCNA
 
-The data sets used are Methylation, RNA squencing and clinical data, 
+The data sets used are Methylation and RNA squencing, 
 which should be placed in a directory
-  ../rawdata/
+    ../rawdata/
 relative to where the source code was cloned. 
 This directory should also contain a subdirectory with probe
 annotation files, ../rawdata/AnnotationFiles/
 
 Scripts found in convertRawData/ convert this data to .Rdata files, 
 which are saved in to a directory called
-  ../Rdata/
+    ../Rdata/
 
 Data files from TCGA must be extracted using tar, prior to execution. 
 
