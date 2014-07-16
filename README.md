@@ -1,11 +1,12 @@
+# Introduction
 This repository contains R scripts which analyse data from
 The Cancer Genome Atlas, currently:
- - BRCA (Breast invasive carcinoma):        450K / RNASeq
- - GBM  (Glioblastoma)                      450K / RNASeqV2
- - KIRC (Kidney renal clear cell carcinoma) 450K / RNASeq
- - OV   (Ovarian serous cystadenocarcinoma)  27K / RNASeqV2
- ~ PRAD (Prostate adenocarcinoma)           450K / RNASeqV2
- ~ LICH (Liver hepatocellular carcinoma)    450K / RNASeqV2
+- BRCA (Breast invasive carcinoma):        450K / RNASeq
+- GBM  (Glioblastoma)                      450K / RNASeqV2
+- KIRC (Kidney renal clear cell carcinoma) 450K / RNASeq
+- OV   (Ovarian serous cystadenocarcinoma)  27K / RNASeqV2
+- PRAD (Prostate adenocarcinoma)           450K / RNASeqV2
+- LICH (Liver hepatocellular carcinoma)    450K / RNASeqV2
 
 Data is available for download at https://tcga-data.nci.nih.gov/tcga/
 
