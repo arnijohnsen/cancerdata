@@ -15,7 +15,7 @@ colnames(file.sample.map) <- c("filename", "barcode")
 # Use only first 14 letters of barcode
 file.sample.map$barcode <- substring(gsub(".*,TCGA", "TCGA", file.sample.map$barcode), 1, 14)
 
-normal.beta.values <- data.frame(rownmaes = prom.probes)
+normal.beta.values <- data.frame(rownames = prom.probes)
 cancer.beta.values <- data.frame(rownames = prom.probes)
 n <- length(file.sample.map$filename)
 cat("Reading beta values\n")
