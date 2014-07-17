@@ -1,14 +1,14 @@
 # Ask user which data sets he wants to use
 cat("Enter data sets you want to use, seperated by spaces\n")
-cat("(Available are BRCA GBM KIRC OV PRAD LIHC)\n")
+cat("(Available are BRCA COAD GBM KIRC LIHC LUAD LUSC OV PRAD)\n")
 data.sets.input <- readline()
 data.sets.list <- unlist(strsplit(data.sets.input, " "))
 
 # Remove unavailable data sets
-available.sets <- c("BRCA", "GBM", "KIRC", "OV", "PRAD", "LIHC")
+available.sets <- c("BRCA", "COAD", "GBM", "KIRC", "LIHC", "LUAD", "LUSC", "OV", "PRAD")
 cat("Removing invalid sets:", data.sets.list[!(data.sets.list %in% available.sets)], "\n")
 data.sets.list <- data.sets.list[data.sets.list %in% available.sets]
-normal.sets <- c("BRCA", "LIHC")
+normal.sets <- c("BRCA", "PRAD", "LIHC")
 
 # Load missing data sets
 for (i in 1:length(data.sets.list)){
@@ -103,11 +103,7 @@ for(i in 1:length(unique.probes.genes)){
     }
   }
   # Ask user for input to plot next plot
-  if(i != length(unique.probes.genes)){
-    cat("Press [enter] for next plot")
-    line <- readline()
-  }else{
-    cat("Last plot reached\n")
-  }
+  cat("Press [enter] for next plot")
+  line <- readline()
 }
 
