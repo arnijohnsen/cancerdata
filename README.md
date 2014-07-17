@@ -49,10 +49,10 @@ Each cancer type (e.g. BRCA) there are several data directories:
     |       |-- Methylation
     |       `-- RNASeq
     `-- Rdata
-        |-- BRCA
-	    |-- calc
-	    |-- data
-	    |-- info
+        `-- BRCA
+            |-- calc
+            |-- data
+            |-- info
             `-- tmp
 
 tar files from TCGA should be untarred to one of
