@@ -16,7 +16,7 @@ n <- length(file.sample.map$filename)
 tmp.rnaseq <- read.table(paste(data.file.dir, file.sample.map$filename[1], sep=""), 
                         header=TRUE, sep="\t", quote="\"", stringsAsFactors = FALSE)
 # Create list of genes and fix one wrong gene name
-genes <- gsub("\\|.*", "", tmp.rnaseq$gene_id[-(1:29)])
+genes <- gsub("\\|.*", "", tmp.rnaseq$gene[-(1:29)])
 genes[grep("SLC35E2", genes)][2] <- "SLC35E2B" # Fix one wrong gene name
 
 # Create data frames for beta values
