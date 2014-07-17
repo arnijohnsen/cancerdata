@@ -8,7 +8,7 @@ data.sets.list <- unlist(strsplit(data.sets.input, " "))
 available.sets <- c("BRCA", "COAD", "GBM", "KIRC", "LIHC", "LUAD", "LUSC", "OV", "PRAD")
 cat("Removing invalid sets:", data.sets.list[!(data.sets.list %in% available.sets)], "\n")
 data.sets.list <- data.sets.list[data.sets.list %in% available.sets]
-normal.sets <- c("BRCA", "PRAD", "LIHC")
+normal.sets <- c("BRCA", "LIHC", "LUAD", "LUSC", "PRAD")
 
 # Load missing data sets
 for (i in 1:length(data.sets.list)){
@@ -63,47 +63,50 @@ for(i in 1:length(data.sets.list)){
 # Filter duplicates from all.probes/all.genes and truncate to one list
 unique.probes.genes <- strsplit(unique(paste(all.probes, all.genes, sep="-")), "-")
 
-# Set plot layout
-layout(matrix(seq(1,2*length(data.sets.list)), ncol=length(data.sets.list)))
-
 # Loop over all probes/genes that will be plotted
-for(i in 1:length(unique.probes.genes)){
-  # Name of probe and gene that will be used
-  probe <- unique.probes.genes[[i]][1]
-  gene  <- unique.probes.genes[[i]][2]
-  cat(probe, gene, "\n")
-  for(i in 1:length(data.sets.list)){
-    cancer.samples <- intersect(rownames(get(paste(data.sets.list[i], ".CMP", sep=""))), 
-                                rownames(get(paste(data.sets.list[i], ".CEA", sep=""))))
-    x.cancer <- get(paste(data.sets.list[i], ".CMP", sep=""))[cancer.samples, probe]
-    y.cancer <- get(paste(data.sets.list[i], ".CEA", sep=""))[cancer.samples, gene]
-    if(data.sets.list[i] %in% normal.sets){
-      normal.samples <- intersect(rownames(get(paste(data.sets.list[i], ".NMP", sep=""))), 
-                                rownames(get(paste(data.sets.list[i], ".NEA", sep=""))))
-      x.normal <- get(paste(data.sets.list[i], ".NMP", sep=""))[normal.samples, probe]
-      y.normal <- get(paste(data.sets.list[i], ".NEA", sep=""))[normal.samples, gene]
+if(length(unique.probes.genes) == 0){
+  cat("No hits\n")
+}else{
+  # Set plot layout
+  layout(matrix(seq(1,2*length(data.sets.list)), ncol=length(data.sets.list)))
 
-    }
-    if(is.null(x.cancer) || is.null(y.cancer) || length(x.cancer) == 0 || length(y.cancer) == 0){
-      plot.new()
-      plot.new()
-    }else{
-      plot(x.cancer, y.cancer, main=data.sets.list[i], xlim=c(0,1),
-           xlab="Methylation", ylab="Expression", 
-	   col="red", pch=20)
+  for(i in 1:length(unique.probes.genes)){
+    # Name of probe and gene that will be used
+    probe <- unique.probes.genes[[i]][1]
+    gene  <- unique.probes.genes[[i]][2]
+    cat(probe, gene, "\n")
+    for(i in 1:length(data.sets.list)){
+      cancer.samples <- intersect(rownames(get(paste(data.sets.list[i], ".CMP", sep=""))), 
+                                  rownames(get(paste(data.sets.list[i], ".CEA", sep=""))))
+      x.cancer <- get(paste(data.sets.list[i], ".CMP", sep=""))[cancer.samples, probe]
+      y.cancer <- get(paste(data.sets.list[i], ".CEA", sep=""))[cancer.samples, gene]
       if(data.sets.list[i] %in% normal.sets){
-        points(x.normal, y.normal, col="blue", pch=20)
+        normal.samples <- intersect(rownames(get(paste(data.sets.list[i], ".NMP", sep=""))), 
+                                  rownames(get(paste(data.sets.list[i], ".NEA", sep=""))))
+        x.normal <- get(paste(data.sets.list[i], ".NMP", sep=""))[normal.samples, probe]
+        y.normal <- get(paste(data.sets.list[i], ".NEA", sep=""))[normal.samples, gene]
+  
       }
-      plot(log(x.cancer), log(y.cancer), main=data.sets.list[i], 
-           xlab="log Methylation", ylab="log Expression", 
-	   col="red", pch=20)
-      if(data.sets.list[i] %in% normal.sets){
-        points(log(x.normal), log(y.normal), col="blue", pch=20)
+      if(is.null(x.cancer) || is.null(y.cancer) || length(x.cancer) == 0 || length(y.cancer) == 0){
+        plot.new()
+        plot.new()
+      }else{
+        plot(x.cancer, y.cancer, main=data.sets.list[i], xlim=c(0,1),
+             xlab="Methylation", ylab="Expression", 
+  	   col="red", pch=20)
+        if(data.sets.list[i] %in% normal.sets){
+          points(x.normal, y.normal, col="blue", pch=20)
+        }
+        plot(log(x.cancer), log(y.cancer), main=data.sets.list[i], 
+             xlab="log Methylation", ylab="log Expression", 
+  	   col="red", pch=20)
+        if(data.sets.list[i] %in% normal.sets){
+          points(log(x.normal), log(y.normal), col="blue", pch=20)
+        }
       }
     }
+    # Ask user for input to plot next plot
+    cat("Press [enter] for next plot")
+    line <- readline()
   }
-  # Ask user for input to plot next plot
-  cat("Press [enter] for next plot")
-  line <- readline()
 }
-
