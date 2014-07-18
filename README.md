@@ -20,6 +20,8 @@ The Cancer Genome Atlas, currently:
     - Uses 27K Methylation and RNASeqV2
 - Prostate adenocarcinoma (PRAD)
     - Uses 450K Methylation and RNASeqV2
+- Rectal adenocarcinoma (READ)
+    - Uses 450K Methylation and RNASeqV2
 
 Data is available for download at https://tcga-data.nci.nih.gov/tcga/
 
