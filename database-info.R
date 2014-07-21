@@ -1,4 +1,4 @@
-data.sets.list <- c("BRCA", "COAD", "GBM", "KIRC", "LIHC", "LUAD", "LUSC", "OV", "PRAD")
+data.sets.list <- c("BRCA", "COAD", "GBM", "KIRC", "LIHC", "LUAD", "LUSC", "OV", "PRAD", "READ")
 n <- length(data.sets.list)
 
 CMP.no.samples <- list()
@@ -65,4 +65,8 @@ all.data.stats <- data.frame(CMP.samples = unlist(CMP.no.samples),
 			     num.probes = unlist(no.probes), 
 			     num.genes = unlist(no.genes))
 
+sink("database-info.txt")
+options("width"=120)
 print(t(all.data.stats))
+sink()
+quit(save="no")
