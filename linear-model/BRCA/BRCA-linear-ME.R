@@ -1,66 +1,52 @@
 # Load data files
 cat("Loading data files\n")
-load("../Rdata/BRCA/info/linkedProbesGenes.Rdata")
+load("../Rdata/BRCA/info/BRCA-linked-probes-genes.Rdata")
 load("../Rdata/BRCA/data/BRCA-NMP.Rdata")
 load("../Rdata/BRCA/data/BRCA-CMP.Rdata")
 load("../Rdata/BRCA/data/BRCA-NEA.Rdata")
 load("../Rdata/BRCA/data/BRCA-CEA.Rdata")
 
+#size <- dim(BRCA.linked.probes.genes)[1]
 # Resize data frames
-cat("Resizing data frames\n")
+cat("Resizing data frames ..\n")
 # Use only samples iwhich have both methylation and expression data
-normalSamples <- intersect(rownames(normalMethyl), rownames(normalRnaseq))
-cancerSamples <- intersect(rownames(cancerMethyl), rownames(cancerRnaseq))
+normal.samples <- intersect(rownames(BRCA.NMP), rownames(BRCA.NEA))
+cancer.samples <- intersect(rownames(BRCA.CMP), rownames(BRCA.CEA))
 
-# Combine cancer and normal data in one frame, using selected samples
-allMethyl <- rbind(normalMethyl[normalSamples,], cancerMethyl[cancerSamples,])
-allRnaseq <- rbind(normalRnaseq[normalSamples,], cancerRnaseq[cancerSamples,])
-
-# Remove other not-used data.frames
-rm(normalMethyl, cancerMethyl, normalRnaseq, cancerRnaseq)
-gc()
-
-n <- dim(allMethyl)[2]
-eps <- 1e-10
-pb <- txtProgressBar(min=1, max=n, style=3)
-prt <- proc.time()
-
-cat("Running loop for lm\n")
-# Create data frame with result
-result <- data.frame(r2 = numeric(0), 
-                     sloEst  = numeric(0), 
-		     sloPval = numeric(0), 
-		     can99q  = numeric(0),
-		     nonMethQuant = numeric(0))
-# Run loop, in each iteration a log~log linear model is computed for
-# a pair of gene-probe
-for(i in 1:n){
+chunk.size <- 1000
+total.size <- dim(BRCA.linked.probes.genes)[1]
+chunks <- ceiling(total.size/chunk.size)
+res.all <- c()
+pb <- txtProgressBar(min=1, max=chunks, style=3)
+for(i in 1:chunks){
   setTxtProgressBar(pb, i)
-  # lm model
-  probe <- as.character(linkedProbesGenes$probes[i])
-  gene  <- as.character(linkedProbesGenes$genes[i])
-  x <- allMethyl[,probe]
-  y <- allRnaseq[,gene] + eps
-  fit <- lm(log(y) ~ log(x), weights=x^3)
-  sum <- summary(fit)
-  # 99th quantile in cancer, mean/sd in cancer, mean/sd in normal
-  xc <- x[73:599]
-  yc <- y[73:599]
-  result[i,] <- c(sum$r.squared,                      # R^2
-                  sum$coefficients[c(2,8)],           # Slope and P-value
-		  quantile(xc, 0.99, na.rm=T),        # 99th methyl quant. of cancer
-		  quantile(yc[xc<0.2], 0.10, na.rm=T))# 10th expr. quant of non-methylated cancer
-
+  index <- (1+chunk.size*(i-1)):(min(chunk.size*i, total.size))
+  # Combine cancer and normal data in one frame, using selected samples
+  BRCA.AMP <- rbind(BRCA.NMP[normal.samples, as.character(BRCA.linked.probes.genes$probes)[index]], 
+                    BRCA.CMP[cancer.samples, as.character(BRCA.linked.probes.genes$probes)[index]])
+  BRCA.AEA <- rbind(BRCA.NEA[normal.samples, as.character(BRCA.linked.probes.genes$genes)[index]], 
+                    BRCA.CEA[cancer.samples, as.character(BRCA.linked.probes.genes$genes)[index]]) 
+  colnames(BRCA.AMP) <- paste(BRCA.linked.probes.genes$probe[index], 
+                              BRCA.linked.probes.genes$genes[index], sep=".")
+  colnames(BRCA.AEA) <- paste(BRCA.linked.probes.genes$probe[index], 
+                              BRCA.linked.probes.genes$genes[index], sep=".")
+  BRCA.all.data <- rbind(BRCA.AMP, BRCA.AEA)
+  
+  n <- length(normal.samples) + length(cancer.samples)
+  res <- apply(BRCA.all.data, 2, function(x) { 
+    tmp <- lm(x[(n+1):(2*n)] ~ x[1:n], weights=x[1:n]^3)
+    sum <- summary(tmp)
+    c(sum$r.squared, sum$coefficients[c(2,8)])
+  })
+  res.all <- cbind(res.all, res)
 }
-print(proc.time() - prt)
-cat("\n")
 
-# Add row names (ex. cg12345678-ABCD1)
-rownames(result) <- paste(linkedProbesGenes$probes[1:n], linkedProbesGenes$genes[1:n], sep="-")
-# Create column with adjusted p-values and r
-result$sloPadj <- p.adjust(result$sloPval, method="BH")
-result$r <- sqrt(result$r2)*sign(result$sloEst)
+cat("Creating data frame..\n")
+rownames(res.all) <- c("r.squared", "slope", "p.raw")
+BRCA.linear.ME <- as.data.frame(t(res.all))
+cat("Adjusting p-values and computing r\n")
+BRCA.linear.ME$p.adj <- p.adjust(BRCA.linear.ME$p.raw, method="BH")
+BRCA.linear.ME$r <- sqrt(BRCA.linear.ME$r.squared)*sign(BRCA.linear.ME$slope)
 
-# Save result and exit
-save(result, file="../Rdata/BRCA/calc/BRCA-lmMethylRnaseq.Rdata")
+save(BRCA.linear.ME, file="../Rdata/BRCA/calc/BRCA-linear-ME.Rdata")
 quit(save="no")
