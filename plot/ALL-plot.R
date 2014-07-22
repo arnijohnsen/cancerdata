@@ -91,20 +91,44 @@ if(length(unique.probes.genes) == 0){
         plot.new()
         plot.new()
       }else{
+	if(data.sets.list[i] %in% normal.sets){
+	  lin <- lm(c(y.normal,y.cancer) ~ c(x.normal, x.cancer))
+	  sum <- summary(lin)
+	}else{
+	  lin <- lm(y.cancer ~ x.cancer)
+	  sum <- summary(lin)
+	}
         plot(x.cancer, y.cancer, main=data.sets.list[i], xlim=c(0,1),
              xlab="Methylation", ylab="Expression", 
-  	   col="red", pch=20)
+	     sub = paste("R^2=", format(sum$r.squared, digits=3),
+	                 ", r=", format(sqrt(sum$r.squared)*sign(sum$coefficients[2]), digits=3), 
+			 ", p=", format(sum$coefficients[8], digits=3), sep=""),
+  	     col="red", pch=20)
         if(data.sets.list[i] %in% normal.sets){
           points(x.normal, y.normal, col="blue", pch=20)
         }
+	abline(a=sum$coefficients[1], b=sum$coefficients[2])
+
+	if(data.sets.list[i] %in% normal.sets){
+	  lin <- lm(log(c(y.normal,y.cancer)) ~ log(c(x.normal, x.cancer)))
+	  sum <- summary(lin)
+	}else{
+	  lin <- lm(log(y.cancer) ~ log(x.cancer))
+	  sum <- summary(lin)
+	}
         plot(log(x.cancer), log(y.cancer), main=data.sets.list[i], 
              xlab="log Methylation", ylab="log Expression", 
-  	   col="red", pch=20)
+	     sub = paste("R^2=", format(sum$r.squared, digits=3),
+	                 ", r=", format(sqrt(sum$r.squared)*sign(sum$coefficients[2]), digits=3), 
+			 ", p=", format(sum$coefficients[8], digits=3), sep=""),
+  	     col="red", pch=20)
         if(data.sets.list[i] %in% normal.sets){
           points(log(x.normal), log(y.normal), col="blue", pch=20)
         }
+	abline(a=sum$coefficients[1], b=sum$coefficients[2])
       }
     }
+    mtext(paste(probe, gene, sep=" "), side=3, line=-1.5, outer=TRUE, font=2)
     # Ask user for input to plot next plot
     cat("Press [enter] for next plot")
     line <- readline()
