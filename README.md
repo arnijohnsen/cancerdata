@@ -3,13 +3,13 @@ This repository contains R scripts which analyse data from
 The Cancer Genome Atlas, currently:
 
 - Breast invasive carcinoma (BRCA)
-    - Uses 450K Methylation and RNASeq
+    - Uses 450K Methylation and RNASeqV2
 - Colon adenocarcinoma (COAD)
     - Uses 450K Methylation and RNASeqV2
 - Glioblastoma (GBM)
     - Uses 450K Methylation and RNASeqV2
 - Kidney renal clear cell carcinoma (KIRC)
-    - Uses 450K Methylation and RNASeq
+    - Uses 450K Methylation and RNASeqV2
 - Liver hepatocellular carcinoma (LIHC)
     - Uses 450K Methylation and RNASeqV2
 - Lung adenocarinoma (LUAD)

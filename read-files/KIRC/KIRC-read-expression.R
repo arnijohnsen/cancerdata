@@ -3,10 +3,10 @@ library(WGCNA)
 
 # Set data file directory and get information about file names and barcodes
 cat("Retrieving file list\n")
-data.file.dir = "../rawdata/KIRC/RNASeq/RNASeq/UNC__IlluminaHiSeq_RNASeq/Level_3/"
+data.file.dir = "../rawdata/KIRC/RNASeq/RNASeqV2/UNC__IlluminaHiSeq_RNASeqV2/Level_3/"
 file.sample.map <- read.table("../rawdata/KIRC/RNASeq/FILE_SAMPLE_MAP.txt", header=T, sep="\t")
 colnames(file.sample.map) <- c("filename", "barcode")
-file.sample.map <- file.sample.map[grep("gene.quantification", file.sample.map$filename),]
+file.sample.map <- file.sample.map[grep("genes.normalized_results", file.sample.map$filename),]
 # Use only first 14 letters of barcode
 file.sample.map$barcode <- substring(gsub(".*,TCGA", "TCGA", file.sample.map$barcode), 1, 14)
 
@@ -16,7 +16,7 @@ n <- length(file.sample.map$filename)
 tmp.rnaseq <- read.table(paste(data.file.dir, file.sample.map$filename[1], sep=""), 
                         header=TRUE, sep="\t", quote="\"", stringsAsFactors = FALSE)
 # Create list of genes and fix one wrong gene name
-genes <- gsub("\\|.*", "", tmp.rnaseq$gene[-(1:29)])
+genes <- gsub("\\|.*", "", tmp.rnaseq$gene_id[-(1:29)])
 genes[grep("SLC35E2", genes)][2] <- "SLC35E2B" # Fix one wrong gene name
 
 # Create data frames for beta values
@@ -33,9 +33,9 @@ for (i in 1:n){
   tmp.rnaseq <- read.table(paste(data.file.dir, file.sample.map$filename[i], sep=""), 
                           header=TRUE, sep="\t", quote="\"", stringsAsFactors = FALSE)
   if(substring(file.sample.map$barcode[i], 14,14) == "0"){
-    cancer.rpkm.values[[file.sample.map$barcode[i]]] <- tmp.rnaseq$RPKM[-(1:29)]
+    cancer.rpkm.values[[file.sample.map$barcode[i]]] <- tmp.rnaseq$normalized_count[-(1:29)]
   }else{
-    normal.rpkm.values[[file.sample.map$barcode[i]]] <- tmp.rnaseq$RPKM[-(1:29)]
+    normal.rpkm.values[[file.sample.map$barcode[i]]] <- tmp.rnaseq$normalized_count[-(1:29)]
     contains.normal <- TRUE
   }
 }
