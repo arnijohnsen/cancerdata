@@ -6,10 +6,15 @@ data.sets.list <- unlist(strsplit(data.sets.input, " "))
 
 # Remove unavailable data sets
 available.sets <- c("BRCA", "COAD", "GBM", "KIRC", "LIHC", "LUAD", "LUSC", "OV", "PRAD", "READ")
-cat("Removing invalid sets:", data.sets.list[!(data.sets.list %in% available.sets)], "\n")
+if(!all(data.sets.list %in% available.sets)){
+  cat("Removing invalid sets:", data.sets.list[!(data.sets.list %in% available.sets)], "\n")
+}
 data.sets.list <- data.sets.list[data.sets.list %in% available.sets]
 normal.sets <- c("BRCA", "LIHC", "LUAD", "LUSC", "PRAD", "READ")
 
+if(length(data.sets.list) == 0){
+  stop("No valid data set entered\n")
+}
 # Load missing data sets
 for (i in 1:length(data.sets.list)){
   if(!exists(paste(data.sets.list[i], ".linked.probes.genes", sep=""))){
