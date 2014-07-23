@@ -9,7 +9,7 @@ no.probes      <- list()
 no.genes       <- list()
 C.co.samples   <- list()
 N.co.samples   <- list()
-for(i in 1:n){
+for (i in 1:n){
   set <- data.sets.list[i]
   if (file.exists(paste("../Rdata/", set, "/info/", set, "-CMP-samples.Rdata", sep=""))){
     load(paste("../Rdata/", set, "/info/", set, "-CMP-samples.Rdata", sep=""))
