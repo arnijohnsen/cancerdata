@@ -7,6 +7,7 @@ load("../Rdata/LIHC/info/LIHC-linked-probes-genes.Rdata")
 load("../Rdata/LIHC/data/LIHC-CMP.Rdata")
 load("../Rdata/LIHC/data/LIHC-CEA.Rdata")
 
+LIHC.linked.probes.genes <- LIHC.linked.probes.genes[-53182,]
 
 # Resize matrices and use only intersecting samples
 cancer.samples <- intersect(rownames(LIHC.CMP), rownames(LIHC.CEA))
