@@ -4,40 +4,70 @@ library(WGCNA)
 # Get info about promoter probes, defined as TSS200 or 5'UTR probes
 cat("Reading probes annotation file\n")
 probe.annotation <- read.table("../rawdata/AnnotationFiles/GenomeStudioProbeAnnotations.txt", header=TRUE, sep="\t", quote="\"")
-idx <- grep("TSS200|5'UTR", probe.annotation$UCSC_REFGENE_GROUP)
-prom.probes <- probe.annotation$TargetID[idx]
+idx1 <- grepl("TSS200|5'UTR", probe.annotation$UCSC_REFGENE_GROUP)
+idx2 <- !is.na(probe.annotation$METHYL27_LOCI)
+prom.probes <- probe.annotation$TargetID[idx1 & idx2]
 
-# Read cancer tissue methylation files (regex matches only cancer files)
+# Set data file directory and get information about file names and barcodes
 cat("Retrieving file list\n")
 data.file.dir <- "../rawdata/OV/Methylation/DNA_Methylation/JHU_USC__HumanMethylation27/Level_3/"
-cancer.file.names <- list.files(data.file.dir, pattern=".*0[A-Z0-9]{2}-[A-Z0-9]{3}-[A-Z0-9]{4}-[0-9]{2}.*")
+file.sample.map <- read.table("../rawdata/OV/Methylation/FILE_SAMPLE_MAP.txt", header=T, sep="\t")
+colnames(file.sample.map) <- c("filename", "barcode")
+# Use only first 14 letters of barcode
+file.sample.map$barcode <- substring(gsub(".*,TCGA", "TCGA", file.sample.map$barcode), 1, 14)
 
-# Create new data.frame containing beta values, 
-# with each cancer sample in one column and each probe in one row
-tmp.methyl <- read.table(paste(data.file.dir, cancer.file.names[1], sep=""), header=TRUE, sep="\t", quote="\"", skip=1)
-cancer.beta.values <- data.frame(rownames = tmp.methyl$Composite.Element.REF[tmp.methyl$Composite.Element.REF %in% prom.probes])
-n.cancer <- length(cancer.file.names)
-cat("Reading cancer beta values\n")
-pb <- txtProgressBar(min=1, max=n.cancer, style=3)
-for (i in 1:n.cancer){
+# Create data frames for beta values
+normal.beta.values <- data.frame(rownames = prom.probes)
+cancer.beta.values <- data.frame(rownames = prom.probes)
+n <- length(file.sample.map$filename)
+cat("Reading beta values\n")
+pb <- txtProgressBar(min=1, max=n, style=3)
+contains.normal <- FALSE
+# In each loop iteration, one file is read and from its barcode it's determined
+#  wether it's normal or cancer, and that data is saved to the corresponding frame
+for (i in 1:n){
   setTxtProgressBar(pb, i)
-  tmp.methyl <- read.table(paste(data.file.dir, cancer.file.names[i], sep=""), header=TRUE, sep="\t", quote="\"", skip=1)
+  tmp.methyl <- read.table(paste(data.file.dir, file.sample.map$filename[i], sep=""), header=TRUE, sep="\t", quote="\"", skip=1)
   tmp <- tmp.methyl[tmp.methyl$Composite.Element.REF %in% prom.probes, ]
-  cancer.beta.values[[substring(gsub(".*TCGA", "TCGA", cancer.file.names[i]),1,14)]] <- tmp$Beta_value 
+  if(substring(file.sample.map$barcode[i], 14,14) == "0"){
+    cancer.beta.values[[file.sample.map$barcode[i]]] <- tmp$Beta_value 
+  }else{
+    normal.beta.values[[file.sample.map$barcode[i]]] <- tmp$Beta_value 
+    contains.normal <- TRUE
+  }
 }
 cat("\n")
+# Fix rownames
 cancer.beta.values$rownames <- NULL
-rownames(cancer.beta.values) <- tmp.methyl$Composite.Element.REF[tmp.methyl$Composite.Element.REF %in% prom.probes]
+rownames(cancer.beta.values) <- prom.probes
+if(contains.normal){
+  normal.beta.values$rownames <- NULL
+  rownames(normal.beta.values) <- prom.probes
+}
 
 # Transpose and filter out bad data
 gg.cancer <- goodGenes(t(cancer.beta.values), verbose=3)
-
-OV.CMP <- as.data.frame(t(cancer.beta.values)[,gg.cancer])
-OV.probes <- colnames(OV.CMP)
-OV.CMP.samples <- rownames(OV.CMP)
-
-# Save to files
-save(OV.CMP,         file="../Rdata/OV/data/OV-CMP.Rdata")
-save(OV.probes,      file="../Rdata/OV/info/OV-probes.Rdata")
-save(OV.CMP.samples, file="../Rdata/OV/info/OV-CMP-samples.Rdata")
+if(contains.normal){
+  gg.normal <- goodGenes(t(normal.beta.values), verbose=3)
+}
+# Save files, two versions depending on if there are any normal samples
+if(contains.normal){
+  OV.CMP <- as.data.frame(t(cancer.beta.values)[,gg.normal & gg.cancer])
+  OV.NMP <- as.data.frame(t(normal.beta.values)[,gg.normal & gg.cancer])
+  OV.probes <- colnames(OV.CMP)
+  OV.CMP.samples <- rownames(OV.CMP)
+  OV.NMP.samples <- rownames(OV.NMP)
+  save(OV.CMP,         file="../Rdata/OV/data/OV-CMP.Rdata")
+  save(OV.NMP,         file="../Rdata/OV/data/OV-NMP.Rdata")
+  save(OV.probes,      file="../Rdata/OV/info/OV-probes.Rdata")
+  save(OV.CMP.samples, file="../Rdata/OV/info/OV-CMP-samples.Rdata")
+  save(OV.NMP.samples, file="../Rdata/OV/info/OV-NMP-samples.Rdata")
+}else{
+  OV.CMP <- as.data.frame(t(cancer.beta.values)[,gg.cancer])
+  OV.probes <- colnames(OV.CMP)
+  OV.CMP.samples <- rownames(OV.CMP)
+  save(OV.CMP,         file="../Rdata/OV/data/OV-CMP.Rdata")
+  save(OV.probes,      file="../Rdata/OV/info/OV-probes.Rdata")
+  save(OV.CMP.samples, file="../Rdata/OV/info/OV-CMP-samples.Rdata")
+}
 quit(save="no")
