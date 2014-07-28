@@ -31,10 +31,10 @@ for(i in 1:chunks){
   colnames(LUSC.AEA) <- paste(LUSC.linked.probes.genes$probe[index], 
                               LUSC.linked.probes.genes$genes[index], sep=".")
   LUSC.all.data <- rbind(LUSC.AMP, LUSC.AEA)
-  
+
   n <- length(normal.samples) + length(cancer.samples)
   res <- apply(LUSC.all.data, 2, function(x) { 
-    tmp <- lm(x[(n+1):(2*n)] ~ x[1:n], weights=x[1:n]^3)
+    tmp <- lm(log(x[(n+1):(2*n)]) ~ log(x[1:n]), weights=x[1:n]^3)
     sum <- summary(tmp)
     c(sum$r.squared, sum$coefficients[c(2,8)])
   })

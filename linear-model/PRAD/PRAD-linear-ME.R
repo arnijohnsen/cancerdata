@@ -34,7 +34,7 @@ for(i in 1:chunks){
   
   n <- length(normal.samples) + length(cancer.samples)
   res <- apply(PRAD.all.data, 2, function(x) { 
-    tmp <- lm(x[(n+1):(2*n)] ~ x[1:n], weights=x[1:n]^3)
+    tmp <- lm(log(x[(n+1):(2*n)]) ~ log(x[1:n]), weights=x[1:n]^3)
     sum <- summary(tmp)
     c(sum$r.squared, sum$coefficients[c(2,8)])
   })
