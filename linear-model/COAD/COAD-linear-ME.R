@@ -7,7 +7,7 @@ load("../Rdata/COAD/data/COAD-CEA.Rdata")
 #size <- dim(COAD.linked.probes.genes)[1]
 # Resize data frames
 cat("Resizing data frames ..\n")
-# Use only samples which have both methylation and expression data
+# Use only samples iwhich have both methylation and expression data
 cancer.samples <- intersect(rownames(COAD.CMP), rownames(COAD.CEA))
 
 chunk.size <- 1000
@@ -18,18 +18,20 @@ pb <- txtProgressBar(min=1, max=chunks, style=3)
 for(i in 1:chunks){
   setTxtProgressBar(pb, i)
   index <- (1+chunk.size*(i-1)):(min(chunk.size*i, total.size))
-  # Combine cancer data in one frame, using selected samples
+  # Combine cancer and normal data in one frame, using selected samples
   COAD.AMP <- COAD.CMP[cancer.samples, as.character(COAD.linked.probes.genes$probes)[index]]
   COAD.AEA <- COAD.CEA[cancer.samples, as.character(COAD.linked.probes.genes$genes)[index]]
-  colnames(COAD.AMP) <- paste(COAD.linked.probes.genes$probe[index],
+  colnames(COAD.AMP) <- paste(COAD.linked.probes.genes$probe[index], 
                               COAD.linked.probes.genes$genes[index], sep=".")
-  colnames(COAD.AEA) <- paste(COAD.linked.probes.genes$probe[index],
+  colnames(COAD.AEA) <- paste(COAD.linked.probes.genes$probe[index], 
                               COAD.linked.probes.genes$genes[index], sep=".")
   COAD.all.data <- rbind(COAD.AMP, COAD.AEA)
 
   n <- length(cancer.samples)
-  res <- apply(COAD.all.data, 2, function(x) {
-    tmp <- lm(log(x[(n+1):(2*n)]) ~ log(x[1:n]), weights=x[1:n]^3)
+  res <- apply(COAD.all.data, 2, function(x) { 
+    a <- x[1:n]
+    b <- x[(n+1):(2*n)] + 1e-10
+    tmp <- lm(log(b) ~ log(a), weights=a^3)
     sum <- summary(tmp)
     c(sum$r.squared, sum$coefficients[c(2,8)])
   })

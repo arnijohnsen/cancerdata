@@ -34,7 +34,9 @@ for(i in 1:chunks){
 
   n <- length(normal.samples) + length(cancer.samples)
   res <- apply(BRCA.all.data, 2, function(x) { 
-    tmp <- lm(log(x[(n+1):(2*n)]) ~ log(x[1:n]), weights=x[1:n]^3)
+    a <- x[1:n]
+    b <- x[(n+1):(2*n)] + 1e-10
+    tmp <- lm(log(b) ~ log(a), weights=a^3)
     sum <- summary(tmp)
     c(sum$r.squared, sum$coefficients[c(2,8)])
   })
