@@ -1,9 +1,10 @@
 # Load files
-load("../Rdata/LUSC/calc/LUSC-linear-ME.Rdata")
-load("../Rdata/LUSC/calc/LUSC-nm-expr.Rdata")
-load("../Rdata/LUSC/calc/LUSC-quantiles.Rdata")
+load("../Rdata/BRCA/calc/BRCA-linear-ME.Rdata")
+load("../Rdata/BRCA/calc/BRCA-nm-expr.Rdata")
+load("../Rdata/BRCA/calc/BRCA-quantiles.Rdata")
+load("../Rdata/BRCA/calc/BRCA-diff-fold.Rdata")
 
-LUSC.statistics <- cbind(LUSC.linear.ME, LUSC.nm.expr, LUSC.quantiles)
-colnames(LUSC.statistics)[6] <- "nm.expr"
-save(LUSC.statistics, file="../Rdata/LUSC/calc/LUSC-statistics.Rdata")
+BRCA.statistics <- cbind(BRCA.linear.ME, BRCA.nm.expr, BRCA.quantiles, BRCA.diff.fold)
+colnames(BRCA.statistics)[6] <- "nm.expr"
+save(BRCA.statistics, file="../Rdata/BRCA/calc/BRCA-statistics.Rdata")
 quit(save="no")

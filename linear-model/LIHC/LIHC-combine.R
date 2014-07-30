@@ -1,9 +1,10 @@
 # Load files
-load("../Rdata/LIHC/calc/LIHC-linear-ME.Rdata")
-load("../Rdata/LIHC/calc/LIHC-nm-expr.Rdata")
-load("../Rdata/LIHC/calc/LIHC-quantiles.Rdata")
+load("../Rdata/BRCA/calc/BRCA-linear-ME.Rdata")
+load("../Rdata/BRCA/calc/BRCA-nm-expr.Rdata")
+load("../Rdata/BRCA/calc/BRCA-quantiles.Rdata")
+load("../Rdata/BRCA/calc/BRCA-diff-fold.Rdata")
 
-LIHC.statistics <- cbind(LIHC.linear.ME, LIHC.nm.expr, LIHC.quantiles)
-colnames(LIHC.statistics)[6] <- "nm.expr"
-save(LIHC.statistics, file="../Rdata/LIHC/calc/LIHC-statistics.Rdata")
+BRCA.statistics <- cbind(BRCA.linear.ME, BRCA.nm.expr, BRCA.quantiles, BRCA.diff.fold)
+colnames(BRCA.statistics)[6] <- "nm.expr"
+save(BRCA.statistics, file="../Rdata/BRCA/calc/BRCA-statistics.Rdata")
 quit(save="no")
