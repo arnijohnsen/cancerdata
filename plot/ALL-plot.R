@@ -117,9 +117,11 @@ if(length(unique.probes.genes) == 0){
         abline(a=sum$coefficients[1], b=sum$coefficients[2])
 
         if(data.sets.list[i] %in% normal.sets){
+          eps <- min(c(y.normal,y.cancer)[c(y.normal,y.cancer) != 0], na.rm=T)
           lin <- lm(log(c(y.normal+eps,y.cancer+eps)) ~ log(c(x.normal+eps, x.cancer+eps)))
           sum <- summary(lin)
         }else{
+          eps <- min(y.cancer[y.cancer != 0], na.rm=T)
           lin <- lm(log(y.cancer+eps) ~ log(x.cancer+eps))
           sum <- summary(lin)
         }
