@@ -68,6 +68,8 @@ for(i in 1:length(data.sets.list)){
 # Filter duplicates from all.probes/all.genes and truncate to one list
 unique.probes.genes <- strsplit(unique(paste(all.probes, all.genes, sep="-")), "-")
 
+eps <- 1e-6
+
 # Loop over all probes/genes that will be plotted
 if(length(unique.probes.genes) == 0){
   cat("No hits\n")
@@ -96,41 +98,41 @@ if(length(unique.probes.genes) == 0){
         plot.new()
         plot.new()
       }else{
-	if(data.sets.list[i] %in% normal.sets){
-	  lin <- lm(c(y.normal,y.cancer) ~ c(x.normal, x.cancer))
-	  sum <- summary(lin)
-	}else{
-	  lin <- lm(y.cancer ~ x.cancer)
-	  sum <- summary(lin)
-	}
+        if(data.sets.list[i] %in% normal.sets){
+          lin <- lm(c(y.normal,y.cancer) ~ c(x.normal, x.cancer))
+          sum <- summary(lin)
+        }else{
+          lin <- lm(y.cancer ~ x.cancer)
+          sum <- summary(lin)
+        }
         plot(x.cancer, y.cancer, main=data.sets.list[i], xlim=c(0,1),
              xlab="Methylation", ylab="Expression", 
-	     sub = paste("R^2=", format(sum$r.squared, digits=3),
-	                 ", r=", format(sqrt(sum$r.squared)*sign(sum$coefficients[2]), digits=3), 
-			 ", p=", format(sum$coefficients[8], digits=3), sep=""),
-  	     col="red", pch=20)
+             sub = paste("R^2=", format(sum$r.squared, digits=3),
+                         ", r=", format(sqrt(sum$r.squared)*sign(sum$coefficients[2]), digits=3), 
+                         ", p=", format(sum$coefficients[8], digits=3), sep=""),
+             col="red", pch=20)
         if(data.sets.list[i] %in% normal.sets){
           points(x.normal, y.normal, col="blue", pch=20)
         }
-	abline(a=sum$coefficients[1], b=sum$coefficients[2])
+        abline(a=sum$coefficients[1], b=sum$coefficients[2])
 
-	if(data.sets.list[i] %in% normal.sets){
-	  lin <- lm(log(c(y.normal,y.cancer)) ~ log(c(x.normal, x.cancer)))
-	  sum <- summary(lin)
-	}else{
-	  lin <- lm(log(y.cancer) ~ log(x.cancer))
-	  sum <- summary(lin)
-	}
-        plot(log(x.cancer), log(y.cancer), main=data.sets.list[i], 
-             xlab="log Methylation", ylab="log Expression", 
-	     sub = paste("R^2=", format(sum$r.squared, digits=3),
-	                 ", r=", format(sqrt(sum$r.squared)*sign(sum$coefficients[2]), digits=3), 
-			 ", p=", format(sum$coefficients[8], digits=3), sep=""),
-  	     col="red", pch=20)
         if(data.sets.list[i] %in% normal.sets){
-          points(log(x.normal), log(y.normal), col="blue", pch=20)
+          lin <- lm(log(c(y.normal+eps,y.cancer+eps)) ~ log(c(x.normal+eps, x.cancer+eps)))
+          sum <- summary(lin)
+        }else{
+          lin <- lm(log(y.cancer+eps) ~ log(x.cancer+eps))
+          sum <- summary(lin)
         }
-	abline(a=sum$coefficients[1], b=sum$coefficients[2])
+        plot(log(x.cancer+eps), log(y.cancer+eps), main=data.sets.list[i], 
+             xlab="log Methylation", ylab="log Expression", 
+             sub = paste("R^2=", format(sum$r.squared, digits=3),
+                         ", r=", format(sqrt(sum$r.squared)*sign(sum$coefficients[2]), digits=3), 
+                         ", p=", format(sum$coefficients[8], digits=3), sep=""),
+                   col="red", pch=20)
+        if(data.sets.list[i] %in% normal.sets){
+          points(log(x.normal+eps), log(y.normal+eps), col="blue", pch=20)
+        }
+        abline(a=sum$coefficients[1], b=sum$coefficients[2])
       }
     }
     mtext(paste(probe, gene, sep=" "), side=3, line=-1.5, outer=TRUE, font=2)
