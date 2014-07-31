@@ -1,38 +1,87 @@
+#Load library
+library(matrixStats)
+
 # Load data files
-cat("Loading data files..\n")
+cat("Loading data files\n")
 load("../Rdata/LUSC/info/LUSC-linked-probes-genes.Rdata")
 load("../Rdata/LUSC/data/LUSC-CMP.Rdata")
+load("../Rdata/LUSC/data/LUSC-CEA.Rdata")
 
-# Compute diffs
-cat("Computing diff and fold 25..\n")
-start.time <- proc.time()
-diff.fold.25 <- apply(LUSC.CMP, 2, function(x) {
-  m1 <- median(x[x>0.25],na.rm=T)
-  m2 <- median(x[x<=0.25],na.rm=T)
-  c(m1-m2, m1/m2)
-})
-cat("Computing diff and fold 33..\n")
-diff.fold.33 <- apply(LUSC.CMP, 2, function(x) {
-  m1 <- median(x[x>0.33],na.rm=T)
-  m2 <- median(x[x<=0.33],na.rm=T)
-  c(m1-m2, m1/m2)
-})
-cat("Computing diff and fold 40..\n")
-diff.fold.40 <- apply(LUSC.CMP, 2, function(x) {
-  m1 <- median(x[x>0.40],na.rm=T)
-  m2 <- median(x[x<=0.40],na.rm=T)
-  c(m1-m2, m1/m2)
-})
 
-LUSC.diff.fold <- data.frame(diff.25 = diff.fold.25[1,as.character(LUSC.linked.probes.genes$probes)],
-                             diff.33 = diff.fold.33[1,as.character(LUSC.linked.probes.genes$probes)],
-                             diff.40 = diff.fold.40[1,as.character(LUSC.linked.probes.genes$probes)],
-                             fold.25 = diff.fold.25[2,as.character(LUSC.linked.probes.genes$probes)],
-                             fold.33 = diff.fold.33[2,as.character(LUSC.linked.probes.genes$probes)],
-                             fold.40 = diff.fold.40[2,as.character(LUSC.linked.probes.genes$probes)])
+# Resize matrices and use only intersecting samples
+cancer.samples <- intersect(rownames(LUSC.CMP), rownames(LUSC.CEA))
 
-rownames(LUSC.diff.fold)<- paste(LUSC.linked.probes.genes$probe,
-                                 LUSC.linked.probes.genes$genes, sep=".")
+chunk.size <- 1000
+total.size <- dim(LUSC.linked.probes.genes)[1]
+chunks     <- ceiling(total.size/chunk.size)
 
+LUSC.diff.25 <- rep(0, total.size)
+LUSC.fold.25 <- rep(0, total.size)
+LUSC.diff.33 <- rep(0, total.size)
+LUSC.fold.33 <- rep(0, total.size)
+LUSC.diff.40 <- rep(0, total.size)
+LUSC.fold.40 <- rep(0, total.size)
+
+cat("Running loop for 25\n")
+pb <- txtProgressBar(min=1, max=chunks, style=3)
+for(i in 1:chunks){
+  setTxtProgressBar(pb, i)
+  index <- (1+chunk.size*(i-1)):(min(chunk.size*i, total.size))
+  x <- LUSC.CMP[cancer.samples, as.character(LUSC.linked.probes.genes$probes[index])] > 0.25
+  x[x==0] <- NA
+  y <- LUSC.CEA[cancer.samples, as.character(LUSC.linked.probes.genes$genes[index])]*x
+  m1 <-  colMedians(as.matrix(y), na.rm=T)
+  x <- LUSC.CMP[cancer.samples, as.character(LUSC.linked.probes.genes$probes[index])] <= 0.25
+  x[x==0] <- NA
+  y <- LUSC.CEA[cancer.samples, as.character(LUSC.linked.probes.genes$genes[index])]*x
+  m2 <-  colMedians(as.matrix(y), na.rm=T)
+  LUSC.diff.25[index] <- m2-m1
+  LUSC.fold.25[index] <- m2/m1
+}
+cat("\n")
+
+cat("Running loop for 33\n")
+pb <- txtProgressBar(min=1, max=chunks, style=3)
+for(i in 1:chunks){
+  setTxtProgressBar(pb, i)
+  index <- (1+chunk.size*(i-1)):(min(chunk.size*i, total.size))
+  x <- LUSC.CMP[cancer.samples, as.character(LUSC.linked.probes.genes$probes[index])] > 0.33
+  x[x==0] <- NA
+  y <- LUSC.CEA[cancer.samples, as.character(LUSC.linked.probes.genes$genes[index])]*x
+  m1 <-  colMedians(as.matrix(y), na.rm=T)
+  x <- LUSC.CMP[cancer.samples, as.character(LUSC.linked.probes.genes$probes[index])] <= 0.33
+  x[x==0] <- NA
+  y <- LUSC.CEA[cancer.samples, as.character(LUSC.linked.probes.genes$genes[index])]*x
+  m2 <-  colMedians(as.matrix(y), na.rm=T)
+  LUSC.diff.33[index] <- m2-m1
+  LUSC.fold.33[index] <- m2/m1
+}
+cat("\n")
+cat("Running loop for 40\n")
+pb <- txtProgressBar(min=1, max=chunks, style=3)
+for(i in 1:chunks){
+  setTxtProgressBar(pb, i)
+  index <- (1+chunk.size*(i-1)):(min(chunk.size*i, total.size))
+  x <- LUSC.CMP[cancer.samples, as.character(LUSC.linked.probes.genes$probes[index])] > 0.40
+  x[x==0] <- NA
+  y <- LUSC.CEA[cancer.samples, as.character(LUSC.linked.probes.genes$genes[index])]*x
+  m1 <-  colMedians(as.matrix(y), na.rm=T)
+  x <- LUSC.CMP[cancer.samples, as.character(LUSC.linked.probes.genes$probes[index])] <= 0.40
+  x[x==0] <- NA
+  y <- LUSC.CEA[cancer.samples, as.character(LUSC.linked.probes.genes$genes[index])]*x
+  m2 <-  colMedians(as.matrix(y), na.rm=T)
+  LUSC.diff.40[index] <- m2-m1
+  LUSC.fold.40[index] <- m2/m1
+}
+cat("\n")
+
+LUSC.diff.fold <- data.frame(diff.25 = LUSC.diff.25,
+                           diff.33 = LUSC.diff.33,
+                           diff.40 = LUSC.diff.40,
+                           fold.25 = LUSC.fold.25,
+                           fold.33 = LUSC.fold.33,
+                           fold.40 = LUSC.fold.40)
+rownames(LUSC.diff.fold) <- paste(LUSC.linked.probes.genes$probe, LUSC.linked.probes.genes$genes, sep=".")
+LUSC.diff.fold[is.nan(as.matrix(LUSC.diff.fold))] <- NA
 save(LUSC.diff.fold, file="../Rdata/LUSC/calc/LUSC-diff-fold.Rdata")
 quit(save="no")
