@@ -1,10 +1,10 @@
 # Load files
-load("../Rdata/COAD/calc/COAD-linear-ME.Rdata")
-load("../Rdata/COAD/calc/COAD-nm-expr.Rdata")
-load("../Rdata/COAD/calc/COAD-quantiles.Rdata")
-load("../Rdata/COAD/calc/COAD-diff-fold.Rdata")
+load("../Rdata/KIRC/calc/KIRC-linear-ME.Rdata")
+load("../Rdata/KIRC/calc/KIRC-nm-expr.Rdata")
+load("../Rdata/KIRC/calc/KIRC-quantiles.Rdata")
+load("../Rdata/KIRC/calc/KIRC-diff-fold.Rdata")
 
-COAD.statistics <- cbind(COAD.linear.ME, COAD.nm.expr, COAD.quantiles, COAD.diff.fold)
-colnames(COAD.statistics)[6] <- "nm.expr"
-save(COAD.statistics, file="../Rdata/COAD/calc/COAD-statistics.Rdata")
+KIRC.statistics <- cbind(KIRC.linear.ME, KIRC.nm.expr, KIRC.quantiles, KIRC.diff.fold)
+colnames(KIRC.statistics)[6] <- "nm.expr"
+save(KIRC.statistics, file="../Rdata/KIRC/calc/KIRC-statistics.Rdata")
 quit(save="no")

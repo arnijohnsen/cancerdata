@@ -1,10 +1,10 @@
 # Load files
-load("../Rdata/BRCA/calc/BRCA-linear-ME.Rdata")
-load("../Rdata/BRCA/calc/BRCA-nm-expr.Rdata")
-load("../Rdata/BRCA/calc/BRCA-quantiles.Rdata")
-load("../Rdata/BRCA/calc/BRCA-diff-fold.Rdata")
+load("../Rdata/PRAD/calc/PRAD-linear-ME.Rdata")
+load("../Rdata/PRAD/calc/PRAD-nm-expr.Rdata")
+load("../Rdata/PRAD/calc/PRAD-quantiles.Rdata")
+load("../Rdata/PRAD/calc/PRAD-diff-fold.Rdata")
 
-BRCA.statistics <- cbind(BRCA.linear.ME, BRCA.nm.expr, BRCA.quantiles, BRCA.diff.fold)
-colnames(BRCA.statistics)[6] <- "nm.expr"
-save(BRCA.statistics, file="../Rdata/BRCA/calc/BRCA-statistics.Rdata")
+PRAD.statistics <- cbind(PRAD.linear.ME, PRAD.nm.expr, PRAD.quantiles, PRAD.diff.fold)
+colnames(PRAD.statistics)[6] <- "nm.expr"
+save(PRAD.statistics, file="../Rdata/PRAD/calc/PRAD-statistics.Rdata")
 quit(save="no")
