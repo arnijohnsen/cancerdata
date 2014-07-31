@@ -1,15 +1,11 @@
 library(WGCNA)
 allowWGCNAThreads()
-load("../Rdata/cell-miner/data/cell-miner-drug.Rdata")
+load("../Rdata/cell-miner/data/cell-miner-drug-filtered.Rdata")
 
-n <- 5000
-
-unique.values <- apply(cell.miner.drug[,1:n], 2, function(x) {length(unique(x))})
-
-cat("Removing", sum(unique.values <= 10), "genes\n")
+n <- 10000
 
 start.time <- proc.time()
-drug.modules <- blockwiseModules(cell.miner.drug[,1:n][,unique.values > 10],
+drug.modules <- blockwiseModules(cell.miner.drug.filtered[,1:n],
                         power=6, TOMType="unsigned", minModuleSize=30,
                         reassignThreshold=0, mergeCutHeight=0.25,
                         numericLabels=TRUE, pamRespectsDendro=FALSE,
