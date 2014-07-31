@@ -56,5 +56,6 @@ idx <- genes.loop %in% LIHC.genes
 
 # Save data to file and exit
 LIHC.linked.probes.genes <- data.frame(probes = probe.loop[idx], genes = genes.loop[idx])
+LIHC.linked.probes.genes <- LIHC.linked.probes.genes[-53182,]
 save(LIHC.linked.probes.genes, file="../Rdata/LIHC/info/LIHC-linked-probes-genes.Rdata")
 quit(save="no")
