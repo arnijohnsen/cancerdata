@@ -1,3 +1,11 @@
+# Ask user if he wants abline
+cat("Do you want abline to be drawn? (y/n)\n")
+abline.answer <- readline()
+if( abline.answer %in% c("y", "Y", "yes", "Yes", "YES", "true", "TRUE", "t", "T")){
+  draw.abline = TRUE
+} else {
+  draw.abline = FALSE
+}
 # Ask user which data sets he wants to use
 cat("Enter data sets you want to use, seperated by spaces\n")
 cat("(Available are BRCA COAD GBM KIRC LIHC LUAD LUSC OV PRAD READ)\n")
@@ -114,7 +122,9 @@ if(length(unique.probes.genes) == 0){
         if(data.sets.list[i] %in% normal.sets){
           points(x.normal, y.normal, col="blue", pch=20)
         }
-        abline(a=sum$coefficients[1], b=sum$coefficients[2])
+        if(draw.abline){
+          abline(a=sum$coefficients[1], b=sum$coefficients[2])
+        }
 
         if(data.sets.list[i] %in% normal.sets){
           eps <- min(c(y.normal,y.cancer)[c(y.normal,y.cancer) != 0], na.rm=T)
@@ -134,7 +144,9 @@ if(length(unique.probes.genes) == 0){
         if(data.sets.list[i] %in% normal.sets){
           points(log(x.normal+eps), log(y.normal+eps), col="blue", pch=20)
         }
-        abline(a=sum$coefficients[1], b=sum$coefficients[2])
+        if(draw.abline){
+          abline(a=sum$coefficients[1], b=sum$coefficients[2])
+        }
       }
     }
     mtext(paste(probe, gene, sep=" "), side=3, line=-1.5, outer=TRUE, font=2)
