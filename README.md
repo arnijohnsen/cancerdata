@@ -32,12 +32,15 @@ Author: Arni Johnsen, arni.johnsen@gmail.com
 Installation: 
 
     git clone https://arnijohnsen@bitbucket.org/arnijohnsen/cancerdata.git
-    mkdir rawdata
-    mkdir Rdata
+    mkdir rawdata Rdata
 
 The Rscripts rely on the following packages:
 
     WGCNA
+
+# Examples
+
+See EXAMPLE.md
 
 # Structure
 
