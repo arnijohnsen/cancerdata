@@ -6,24 +6,32 @@ cat("Loading data files\n")
 load("../Rdata/BRCA/info/BRCA-linked-probes-genes.Rdata")
 load("../Rdata/BRCA/data/BRCA-CMP.Rdata")
 load("../Rdata/BRCA/data/BRCA-CEA.Rdata")
-load("../Rdata/BRCA/data/BRCA-NMP.Rdata")
-load("../Rdata/BRCA/data/BRCA-NEA.Rdata")
+if(file.exists("../Rdata/BRCA/data/BRCA-NMP.Rdata") && file.exists("../Rdata/BRCA/data/BRCA-NEA.Rdata")){
+  load("../Rdata/BRCA/data/BRCA-NMP.Rdata")
+  load("../Rdata/BRCA/data/BRCA-NEA.Rdata")
+  has.normal <- TRUE
+} else {
+  has.normal <- FALSE
+}
+cat(has.normal, "\n")
 
 
 # Resize matrices and use only intersecting samples
 cancer.samples <- intersect(rownames(BRCA.CMP), rownames(BRCA.CEA))
-normal.samples <- intersect(rownames(BRCA.NMP), rownames(BRCA.NEA))
+if(has.normal){
+  normal.samples <- intersect(rownames(BRCA.NMP), rownames(BRCA.NEA))
+}
 
 chunk.size <- 1000
 total.size <- dim(BRCA.linked.probes.genes)[1]
 chunks     <- ceiling(total.size/chunk.size)
 
-BRCA.expr.nonm   <- rep(0, total.size)
-BRCA.freq.nonm   <- rep(0, total.size)
-BRCA.expr.meth   <- rep(0, total.size)
-BRCA.freq.meth   <- rep(0, total.size)
-BRCA.expr.normal <- rep(0, total.size)
-BRCA.freq.normal <- rep(0, total.size)
+BRCA.expr.nonm   <- rep(NA, total.size)
+BRCA.freq.nonm   <- rep(0,  total.size)
+BRCA.expr.meth   <- rep(NA, total.size)
+BRCA.freq.meth   <- rep(0,  total.size)
+BRCA.expr.normal <- rep(NA, total.size)
+BRCA.freq.normal <- rep(0,  total.size)
 
 cat("Running loop for non methylated\n")
 pb <- txtProgressBar(min=1, max=chunks, style=3)
@@ -57,6 +65,7 @@ for(i in 1:chunks){
 }
 cat("\n")
 
+if(has.normal){
 cat("Running loop for normal\n")
 pb <- txtProgressBar(min=1, max=chunks, style=3)
 for(i in 1:chunks){
@@ -70,6 +79,8 @@ for(i in 1:chunks){
   BRCA.freq.normal[index] <- apply(y, 2, function(x) {sum(!is.na(x))})
 }
 cat("\n")
+}
+
 
 BRCA.expr.medians <- data.frame(freq.normal = BRCA.freq.normal, 
                                 expr.normal = BRCA.expr.normal,
