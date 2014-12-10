@@ -47,5 +47,5 @@ rownames(cancerBetaValues) <- promProbes
 
 # Save data for next script, as doing everything in the same script
 # caused memory issues
-save(normalBetaValues, file="../Rdata/BRCA/tmp/normalBetaValues.Rdata")
-save(cancerBetaValues, file="../Rdata/BRCA/tmp/cancerBetaValues.Rdata")
+save(normalBetaValues, file="../Rdata/BRCA/tmp/normalBetaValuesProm.Rdata")
+save(cancerBetaValues, file="../Rdata/BRCA/tmp/cancerBetaValuesProm.Rdata")

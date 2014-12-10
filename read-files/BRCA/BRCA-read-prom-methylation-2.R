@@ -2,8 +2,8 @@
 library(WGCNA)
 
 # Load data from previous script
-load(file="../Rdata/BRCA/tmp/normalBetaValues.Rdata")
-load(file="../Rdata/BRCA/tmp/cancerBetaValues.Rdata")
+load(file="../Rdata/BRCA/tmp/normalBetaValuesProm.Rdata")
+load(file="../Rdata/BRCA/tmp/cancerBetaValuesProm.Rdata")
 
 # Transpose and filter out bad data
 ggNormal <- goodGenes(t(normalBetaValues), verbose=3)
